@@ -1,0 +1,32 @@
+.inputs {
+    display: flex;
+    gap: 32px;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    > label {
+        color: hsl(0, 1%, 44%);
+        font-size: 14px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    > input {
+        font-size: 32px;
+        padding: 11px 20px ;
+        border: 1px solid hsl(0, 0%, 86%);
+        border-radius: 8px;
+
+        &::placeholder {
+            color: hsl(0, 0%, 8%, 0.5);
+        }
+
+        &:hover {
+            border-color: hsl(259, 100%, 65%);
+        }
+    }
+}

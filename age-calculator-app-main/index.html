@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,700;1,400;1,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./styles/index.css">
+</head>
+
+<body class="flex-container flex-center">
+    <main>
+        <form class="form">
+            <section class="inputs">
+                <label for="day" class="input">
+                    <label>Day</label>
+                    <input id="day" name="day" type="number" min="1" max="31" placeholder="DD">
+                </label>
+                <label for="month" class="input">
+                    <label>Month</label>
+                    <input id="month" name="month" type="number" min="1" max="12" placeholder="MM">
+                </label>
+                <label for="year" class="input">
+                    <label>Year</label>
+                    <input id="year" name="year" type="number" min="-9999" max="9999" placeholder="YYYY">
+                </label>
+            </section>
+            <div class="button">
+                <hr>
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="46" height="44" viewBox="0 0 46 44">
+                        <g fill="none" stroke="#FFF" stroke-width="2">
+                            <path d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44" />
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <aside class="flex-container flex-column">
+                <label for="output-year" class="output">
+                    <output id="output-year" for="day month year">--</output>
+                    <label>Years</label>
+                </label>
+                <label for="output-month" class="output">
+                    <output id="output-month" for="day month year">--</output>
+                    <label>Months</label>
+                </label>
+                <label for="output-day" class="output">
+                    <output id="output-day" for="day month year">--</output>
+                    <label>Days</label>
+                </label>
+            </aside>
+        </form>
+    </main>
+</body>
+
+</html>

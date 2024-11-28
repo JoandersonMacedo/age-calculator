@@ -1,0 +1,13 @@
+.output {
+    font-size: 104px;
+    font-weight: 800;
+    font-style: italic;
+
+    > output {
+        color: hsl(259, 100%, 65%);
+    }
+
+    > label {
+        text-transform: lowercase;
+    }
+}
