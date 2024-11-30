@@ -14,24 +14,28 @@
 
 <body class="flex-container flex-center">
     <main>
-        <form class="form">
-            <section class="inputs">
-                <label for="day" class="input">
-                    <label>Day</label>
+        <form class="form" id="age-calculator" novalidate>
+            <section class="inputs" id="inputs">
+                <div class="input-container">
+                    <label class="identifier">Day</label>
                     <input id="day" name="day" type="number" min="1" max="31" placeholder="DD">
-                </label>
-                <label for="month" class="input">
-                    <label>Month</label>
+                    <label class="mensage-invalid-value" for="day"></label>
+                </div>
+                <div class="input-container">
+                    <label class="identifier">Month</label>
                     <input id="month" name="month" type="number" min="1" max="12" placeholder="MM">
-                </label>
-                <label for="year" class="input">
-                    <label>Year</label>
+                    <label class="mensage-invalid-value" for="month"></label>
+                </div>
+                <div class="input-container">
+                    <label class="identifier">Year</label>
                     <input id="year" name="year" type="number" min="-9999" max="9999" placeholder="YYYY">
-                </label>
+                    <label class="mensage-invalid-value" for="year"></label>
+                </div>
+                <aside class="mensage-invalid-value">Must be a valide date</aside>
             </section>
             <div class="button">
                 <hr>
-                <button>
+                <button type="submit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="46" height="44" viewBox="0 0 46 44">
                         <g fill="none" stroke="#FFF" stroke-width="2">
                             <path d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44" />
@@ -55,6 +59,7 @@
             </aside>
         </form>
     </main>
+    <script src="./scripts/index.js"></script>
 </body>
 
 </html>

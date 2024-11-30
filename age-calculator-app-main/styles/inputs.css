@@ -3,21 +3,16 @@
     gap: 32px;
 }
 
-.input {
+
+
+.input-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
 
-    > label {
-        color: hsl(0, 1%, 44%);
-        font-size: 14px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-    }
-
-    > input {
+    >input {
         font-size: 32px;
-        padding: 11px 20px ;
+        padding: 11px 20px;
         border: 1px solid hsl(0, 0%, 86%);
         border-radius: 8px;
 
@@ -28,5 +23,38 @@
         &:hover {
             border-color: hsl(259, 100%, 65%);
         }
+    }
+
+    .identifier {
+        color: hsl(0, 1%, 44%);
+        font-size: 14px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+}
+
+.mensage-invalid-value {
+    display: none;
+}
+
+.invalid-date {
+    .mensage-invalid-value {
+        display: block;
+        color: hsl(0, 100%, 67%);
+    }
+}
+
+.invalid-value {
+    >input {
+        border-color: hsl(0, 100%, 67%);
+    }
+
+    .identifier {
+        color: hsl(0, 100%, 67%);
+    }
+
+    .mensage-invalid-value {
+        display: block;
+        color: hsl(0, 100%, 67%);
     }
 }
