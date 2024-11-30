@@ -1,1 +1,1 @@
-# age-calculator
+# Age calculator
