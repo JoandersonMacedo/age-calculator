@@ -19,26 +19,27 @@
                 <div class="input-container">
                     <label class="identifier">Day</label>
                     <input id="day" name="day" type="number" min="1" max="31" placeholder="DD">
-                    <label class="mensage-invalid-value" for="day"></label>
+                    <label class="message-invalid-value" for="day"></label>
                 </div>
                 <div class="input-container">
                     <label class="identifier">Month</label>
                     <input id="month" name="month" type="number" min="1" max="12" placeholder="MM">
-                    <label class="mensage-invalid-value" for="month"></label>
+                    <label class="message-invalid-value" for="month"></label>
                 </div>
                 <div class="input-container">
                     <label class="identifier">Year</label>
                     <input id="year" name="year" type="number" min="-9999" max="9999" placeholder="YYYY">
-                    <label class="mensage-invalid-value" for="year"></label>
+                    <label class="message-invalid-value" for="year"></label>
                 </div>
-                <aside class="mensage-invalid-value">Must be a valide date</aside>
+                <aside class="message-invalid-value">Must be a valide date</aside>
             </section>
             <div class="button">
                 <hr>
                 <button type="submit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="46" height="44" viewBox="0 0 46 44">
                         <g fill="none" stroke="#FFF" stroke-width="2">
-                            <path d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44" />
+                            <path
+                                d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44" />
                         </g>
                     </svg>
                 </button>
@@ -59,6 +60,10 @@
             </aside>
         </form>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+    <script>
+        console.log(moment(1, 2, 2000))
+    </script>
     <script src="./scripts/index.js"></script>
 </body>
 

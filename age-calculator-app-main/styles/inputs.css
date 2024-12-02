@@ -33,7 +33,7 @@
     }
 }
 
-.mensage-invalid-value {
+.message-invalid-value {
     display: none;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .invalid-value {
-    >input {
+    input {
         border-color: hsl(0, 100%, 67%);
     }
 
@@ -53,7 +53,7 @@
         color: hsl(0, 100%, 67%);
     }
 
-    .mensage-invalid-value {
+    .message-invalid-value {
         display: block;
         color: hsl(0, 100%, 67%);
     }
