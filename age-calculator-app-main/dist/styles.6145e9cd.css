@@ -1,0 +1,295 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+button,
+input {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    border: none;
+    padding: 0;
+}
+
+button {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+input:focus {
+    outline: none;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+html {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: hsl(0, 0%, 8%);
+}
+
+body {
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: hsl(0, 0%, 94%);
+}
+.flex-container {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-center {
+    align-items: center;
+    justify-content: center;
+}
+.form {
+    box-sizing: border-box;
+    width: 836px;
+    height: 650px;
+    background-color: hsl(0, 0%, 100%);
+    padding: 54px;
+    border-radius: 24px 24px 192px 24px;
+}
+
+.button {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr auto;
+
+    > hr {
+        border-color: hsl(0, 0%, 8%, 0.1);
+        width: 100%;
+    }
+
+    > button {
+        width: 96px;
+        height: 96px;
+        justify-self: end;
+        background-color: hsl(259, 100%, 65%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            background-color: hsl(0, 0%, 8%);
+            cursor: pointer;
+        }
+    }
+}
+.inputs {
+    display: flex;
+    gap: 32px;
+}
+
+
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    >input {
+        font-size: 32px;
+        padding: 11px 20px;
+        border: 1px solid hsl(0, 0%, 86%);
+        border-radius: 8px;
+
+        &::placeholder {
+            color: hsl(0, 0%, 8%, 0.5);
+        }
+
+        &:hover {
+            border-color: hsl(259, 100%, 65%);
+        }
+    }
+
+    .identifier {
+        color: hsl(0, 1%, 44%);
+        font-size: 14px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+}
+
+.message-invalid-value {
+    display: none;
+}
+
+.invalid-date {
+    .mensage-invalid-value {
+        display: block;
+        color: hsl(0, 100%, 67%);
+    }
+}
+
+.invalid-value {
+    input {
+        border-color: hsl(0, 100%, 67%);
+    }
+
+    .identifier {
+        color: hsl(0, 100%, 67%);
+    }
+
+    .message-invalid-value {
+        display: block;
+        color: hsl(0, 100%, 67%);
+    }
+}
+.output {
+    font-size: 104px;
+    font-weight: 800;
+    font-style: italic;
+
+    > output {
+        color: hsl(259, 100%, 65%);
+    }
+
+    > label {
+        text-transform: lowercase;
+    }
+}
+
+
+
+/*# sourceMappingURL=/styles.6145e9cd.css.map */
