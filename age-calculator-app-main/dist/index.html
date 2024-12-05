@@ -15,22 +15,24 @@
     <main>
         <form class="form" id="age-calculator" novalidate="">
             <section class="inputs" id="inputs">
-                <div class="input-container">
-                    <label class="identifier">Day</label>
-                    <input id="day" name="day" type="number" min="1" max="31" placeholder="DD">
-                    <label class="message-invalid-value" for="day"></label>
+                <div>
+                    <div class="input-container">
+                        <label class="identifier">Day</label>
+                        <input class="input" id="day" name="day" type="number" min="1" max="31" placeholder="DD">
+                        <label class="message-invalid-value" for="day"></label>
+                    </div>
+                    <div class="input-container">
+                        <label class="identifier">Month</label>
+                        <input class="input" id="month" name="month" type="number" min="1" max="12" placeholder="MM">
+                        <label class="message-invalid-value" for="month"></label>
+                    </div>
+                    <div class="input-container">
+                        <label class="identifier">Year</label>
+                        <input class="input" id="year" name="year" type="number" min="-9999" max="9999" placeholder="YYYY">
+                        <label class="message-invalid-value" for="year"></label>
+                    </div>
                 </div>
-                <div class="input-container">
-                    <label class="identifier">Month</label>
-                    <input id="month" name="month" type="number" min="1" max="12" placeholder="MM">
-                    <label class="message-invalid-value" for="month"></label>
-                </div>
-                <div class="input-container">
-                    <label class="identifier">Year</label>
-                    <input id="year" name="year" type="number" min="-9999" max="9999" placeholder="YYYY">
-                    <label class="message-invalid-value" for="year"></label>
-                </div>
-                <aside class="message-invalid-value">Must be a valide date</aside>
+                <aside class="message-invalid-date">Must be a valide date</aside>
             </section>
             <div class="button">
                 <hr>

@@ -157,6 +157,7 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 html {
     font-family: "Poppins", sans-serif;
     font-weight: 700;
@@ -210,23 +211,25 @@ body {
         align-items: center;
         justify-content: center;
 
-        &:hover {
+        &:hover,
+        &:focus-visible {
             background-color: hsl(0, 0%, 8%);
+        }
+        
+        &:hover {
             cursor: pointer;
         }
     }
 }
-.inputs {
+.inputs > div {
     display: flex;
     gap: 32px;
 }
 
-
-
 .input-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 11px;
 
     >input {
         font-size: 32px;
@@ -251,12 +254,25 @@ body {
     }
 }
 
-.message-invalid-value {
+.message-invalid-value,
+.message-invalid-date {
     display: none;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 14px;
 }
 
 .invalid-date {
-    .mensage-invalid-value {
+    input{
+        border-color: hsl(0, 100%, 67%);
+    }
+
+    .identifier {
+        color: hsl(0, 100%, 67%);
+    }
+
+    .message-invalid-date {
+        padding-top: 11px;
         display: block;
         color: hsl(0, 100%, 67%);
     }

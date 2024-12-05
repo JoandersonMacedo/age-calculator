@@ -27,8 +27,12 @@
         align-items: center;
         justify-content: center;
 
-        &:hover {
+        &:hover,
+        &:focus-visible {
             background-color: hsl(0, 0%, 8%);
+        }
+        
+        &:hover {
             cursor: pointer;
         }
     }

@@ -1,14 +1,12 @@
-.inputs {
+.inputs > div {
     display: flex;
     gap: 32px;
 }
 
-
-
 .input-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 11px;
 
     >input {
         font-size: 32px;
@@ -33,12 +31,25 @@
     }
 }
 
-.message-invalid-value {
+.message-invalid-value,
+.message-invalid-date {
     display: none;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 14px;
 }
 
 .invalid-date {
-    .mensage-invalid-value {
+    input{
+        border-color: hsl(0, 100%, 67%);
+    }
+
+    .identifier {
+        color: hsl(0, 100%, 67%);
+    }
+
+    .message-invalid-date {
+        padding-top: 11px;
         display: block;
         color: hsl(0, 100%, 67%);
     }
