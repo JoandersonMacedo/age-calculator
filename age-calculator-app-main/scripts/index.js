@@ -11,8 +11,6 @@ const outputMonth = document.getElementById('output-month');
 const outputYear = document.getElementById('output-year');
 
 arayImputContainers.forEach((container) => {
-    const messageInput = container.querySelector('.message-invalid-value')
-
     container.addEventListener('input',
         (event) => {
             const eventElement = event.target
