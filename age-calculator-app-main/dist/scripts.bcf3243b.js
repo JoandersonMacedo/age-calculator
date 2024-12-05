@@ -5812,11 +5812,12 @@ var global = arguments[3];
 },{}],"scripts/index.js":[function(require,module,exports) {
 "use strict";
 
-var _moment = _interopRequireWildcard(require("moment"));
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+var _moment = _interopRequireDefault(require("moment"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var now = (0, _moment.default)();
 var form = document.getElementById('age-calculator');
 var inputs = form.querySelector('#inputs');
+var messageInputs = inputs.querySelector('.message-invalid-date');
 var arayImputContainers = inputs.querySelectorAll('.input-container');
 var outputDay = document.getElementById('output-day');
 var outputMonth = document.getElementById('output-month');
@@ -5828,13 +5829,6 @@ arayImputContainers.forEach(function (container) {
     var value = parseInt(eventElement.value);
     var maxValue = parseInt(eventElement.getAttribute('max'));
     var minValue = parseInt(eventElement.getAttribute('min'));
-    if (value > maxValue || value < minValue) {
-      inputs.classList.remove('invalid-date');
-      container.classList.add('invalid-value');
-      messageInput.textContent = "Must be a valid ".concat(eventElement.getAttribute('name'));
-    } else {
-      container.classList.remove('invalid-value');
-    }
     var nodeArray = Array.from(arayImputContainers);
     var formValues = {};
     nodeArray.forEach(function (inputContainer) {
@@ -5845,8 +5839,19 @@ arayImputContainers.forEach(function (container) {
     });
     if (formValues.day && formValues.month && formValues.year && !(0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isValid()) {
       inputs.classList.add('invalid-date');
+      messageInputs.textContent = 'Must be a valide date';
+    } else if (formValues.day && formValues.month && formValues.year && !(0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isBefore(now)) {
+      inputs.classList.add('invalid-date');
+      messageInputs.textContent = 'Must be in the past';
     } else {
       inputs.classList.remove('invalid-date');
+    }
+    console.log(value > maxValue || value < minValue);
+    if (value > maxValue || value < minValue) {
+      inputs.classList.remove('invalid-date');
+      container.classList.add('invalid-value');
+    } else {
+      container.classList.remove('invalid-value');
     }
   });
 });
@@ -5856,44 +5861,26 @@ form.addEventListener('submit', function (event) {
   arayImputContainers.forEach(function (container) {
     var input = container.querySelector('input');
     var messageInput = container.querySelector('.message-invalid-value');
+    var value = parseInt(input.value);
+    var maxValue = parseInt(input.getAttribute('max'));
+    var minValue = parseInt(input.getAttribute('min'));
+    console.log(input.value === '', value <= maxValue && value >= minValue, value > maxValue || value < minValue);
     if (input.value === '') {
       container.classList.add('invalid-value');
       messageInput.textContent = 'This field is required';
-    } else {
+    } else if (value <= maxValue && value >= minValue) {
       container.classList.remove('invalid-value');
+      var chave = input.getAttribute('name');
+      formValues[[chave]] = value;
     }
-    var value = parseInt(input.value);
-    var chave = input.getAttribute('name');
-    formValues[[chave]] = value;
   });
-  if (formValues.day && formValues.month && formValues.year && (0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isValid()) {
-    var _now = (0, _moment.default)();
-    console.log(_now);
-    //date2.diff(date1, 'days');
-    // let toNowYears = moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-MM-YYYY').fromNow();
-    // let toNowMonths = moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-MM-YYYY').fromNow();
-    // let toNowDays = moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-MM-YYYY').fromNow();
-
-    var toNowYears = _now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY'), 'years');
-    var toNowMonths = _now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year + toNowYears), 'D-M-YYYY'), 'months');
-    var toNowDays = _now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month + toNowMonths, "-").concat(formValues.year + toNowYears), 'D-M-YYYY'), 'days');
-    var age = {
-      years: toNowYears,
-      months: toNowMonths,
-      days: toNowDays
-    };
-    console.log(age);
-
-    // let moreYears = 1;
-    // let moreMonths = 1;
-    // let moreDays = 1;
-
-    // while(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-MM-YYYY').isBefore(now)) {
-    //     if(moment(`${formValues.day}-${formValues.month}-${formValues.year + moreYears}`, 'D-MM-YYYY').isBefore(now)) {
-    //         age.years ++;
-    //         moreYears ++;
-    //     }
-    // }
+  if (formValues.day && formValues.month && formValues.year && (0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isValid() && formValues.year && (0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isBefore(now)) {
+    var toNowYears = now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY'), 'years');
+    var toNowMonths = now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year + toNowYears), 'D-M-YYYY'), 'months');
+    var toNowDays = now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month + toNowMonths, "-").concat(formValues.year + toNowYears), 'D-M-YYYY'), 'days');
+    outputDay.textContent = "".concat(toNowDays);
+    outputMonth.textContent = "".concat(toNowMonths);
+    outputYear.textContent = "".concat(toNowYears);
   }
 });
 },{"moment":"node_modules/moment/moment.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -5921,7 +5908,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57297" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50571" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

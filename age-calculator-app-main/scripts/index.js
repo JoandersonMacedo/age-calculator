@@ -1,7 +1,10 @@
-import moment, { months, now } from "moment";
+import moment from "moment";
+
+const now = moment();
 
 const form = document.getElementById('age-calculator');
 const inputs = form.querySelector('#inputs');
+const messageInputs = inputs.querySelector('.message-invalid-date');
 const arayImputContainers = inputs.querySelectorAll('.input-container');
 const outputDay = document.getElementById('output-day');
 const outputMonth = document.getElementById('output-month');
@@ -17,14 +20,6 @@ arayImputContainers.forEach((container) => {
             const maxValue = parseInt(eventElement.getAttribute('max'));
             const minValue = parseInt(eventElement.getAttribute('min'));
 
-            if (value > maxValue || value < minValue) {
-                inputs.classList.remove('invalid-date');
-                container.classList.add('invalid-value');
-                messageInput.textContent = `Must be a valid ${eventElement.getAttribute('name')}`;
-            } else {
-                container.classList.remove('invalid-value')
-            }
-
             const nodeArray = Array.from(arayImputContainers);
             const formValues = {};
             nodeArray.forEach((inputContainer) => {
@@ -36,9 +31,22 @@ arayImputContainers.forEach((container) => {
 
             if (formValues.day && formValues.month && formValues.year && !(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid())) {
                 inputs.classList.add('invalid-date');
+                messageInputs.textContent = 'Must be a valide date';
+            } else if (formValues.day && formValues.month && formValues.year && !((moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now)))) {
+                inputs.classList.add('invalid-date');
+                messageInputs.textContent = 'Must be in the past';
             } else {
                 inputs.classList.remove('invalid-date');
+
             }
+            console.log(value > maxValue || value < minValue)
+            if (value > maxValue || value < minValue) {
+                inputs.classList.remove('invalid-date');
+                container.classList.add('invalid-value');
+            } else {
+                container.classList.remove('invalid-value')
+            }
+
         }
     );
 });
@@ -50,50 +58,30 @@ form.addEventListener('submit', (event) => {
     arayImputContainers.forEach((container) => {
         const input = container.querySelector('input');
         const messageInput = container.querySelector('.message-invalid-value');
+        const value = parseInt(input.value);
+        const maxValue = parseInt(input.getAttribute('max'));
+        const minValue = parseInt(input.getAttribute('min'));
 
+        console.log(input.value === '',value <= maxValue && value >= minValue, value > maxValue || value < minValue)
         if (input.value === '') {
             container.classList.add('invalid-value');
-            messageInput.textContent = 'This field is required'
-        } else {
+            messageInput.textContent = 'This field is required';
+        } else if (value <= maxValue && value >= minValue) {            
             container.classList.remove('invalid-value');
+            const chave = input.getAttribute('name');
+            formValues[[chave]] = value;
         }
-
-        const value = parseInt(input.value);
-        const chave = input.getAttribute('name')
-        formValues[[chave]] = value;
     })
 
-    if (formValues.day && formValues.month && formValues.year && (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid())) {
-        const now = moment()
-        console.log(now);
-        //date2.diff(date1, 'days');
-        // let toNowYears = moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-MM-YYYY').fromNow();
-        // let toNowMonths = moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-MM-YYYY').fromNow();
-        // let toNowDays = moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-MM-YYYY').fromNow();
-
+    if (formValues.day && formValues.month && formValues.year &&
+        (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid()) &&
+        formValues.year && (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now))) {
         let toNowYears = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY'), 'years');
         let toNowMonths = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'months');
         let toNowDays = now.diff(moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'days');
 
-        const age = {
-            years: toNowYears,
-            months: toNowMonths,
-            days: toNowDays,
-        }
-
-        console.log(age)
-        
-
-        // let moreYears = 1;
-        // let moreMonths = 1;
-        // let moreDays = 1;
-
-        // while(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-MM-YYYY').isBefore(now)) {
-        //     if(moment(`${formValues.day}-${formValues.month}-${formValues.year + moreYears}`, 'D-MM-YYYY').isBefore(now)) {
-        //         age.years ++;
-        //         moreYears ++;
-        //     }
-        // }
-
+        outputDay.textContent = `${toNowDays}`
+        outputMonth.textContent = `${toNowMonths}`
+        outputYear.textContent = `${toNowYears}`
     }
 });
