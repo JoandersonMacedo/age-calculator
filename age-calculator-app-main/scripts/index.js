@@ -37,7 +37,7 @@ arayImputContainers.forEach((container) => {
                 inputs.classList.remove('invalid-date');
 
             }
-            console.log(value > maxValue || value < minValue)
+
             if (value > maxValue || value < minValue) {
                 inputs.classList.remove('invalid-date');
                 container.classList.add('invalid-value');
@@ -60,7 +60,6 @@ form.addEventListener('submit', (event) => {
         const maxValue = parseInt(input.getAttribute('max'));
         const minValue = parseInt(input.getAttribute('min'));
 
-        console.log(input.value === '',value <= maxValue && value >= minValue, value > maxValue || value < minValue)
         if (input.value === '') {
             container.classList.add('invalid-value');
             messageInput.textContent = 'This field is required';
@@ -74,9 +73,9 @@ form.addEventListener('submit', (event) => {
     if (formValues.day && formValues.month && formValues.year &&
         (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid()) &&
         formValues.year && (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now))) {
-        let toNowYears = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY'), 'years');
-        let toNowMonths = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'months');
-        let toNowDays = now.diff(moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'days');
+        const toNowYears = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY'), 'years');
+        const toNowMonths = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'months');
+        const toNowDays = now.diff(moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'days');
 
         outputDay.textContent = `${toNowDays}`
         outputMonth.textContent = `${toNowMonths}`

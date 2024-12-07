@@ -11,3 +11,9 @@
         text-transform: lowercase;
     }
 }
+
+@media (max-width: 868px) {
+    .output {
+        font-size: 52px;
+    }
+}

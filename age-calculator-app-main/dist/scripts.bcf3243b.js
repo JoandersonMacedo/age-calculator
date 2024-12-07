@@ -5823,7 +5823,6 @@ var outputDay = document.getElementById('output-day');
 var outputMonth = document.getElementById('output-month');
 var outputYear = document.getElementById('output-year');
 arayImputContainers.forEach(function (container) {
-  var messageInput = container.querySelector('.message-invalid-value');
   container.addEventListener('input', function (event) {
     var eventElement = event.target;
     var value = parseInt(eventElement.value);
@@ -5846,7 +5845,6 @@ arayImputContainers.forEach(function (container) {
     } else {
       inputs.classList.remove('invalid-date');
     }
-    console.log(value > maxValue || value < minValue);
     if (value > maxValue || value < minValue) {
       inputs.classList.remove('invalid-date');
       container.classList.add('invalid-value');
@@ -5864,7 +5862,6 @@ form.addEventListener('submit', function (event) {
     var value = parseInt(input.value);
     var maxValue = parseInt(input.getAttribute('max'));
     var minValue = parseInt(input.getAttribute('min'));
-    console.log(input.value === '', value <= maxValue && value >= minValue, value > maxValue || value < minValue);
     if (input.value === '') {
       container.classList.add('invalid-value');
       messageInput.textContent = 'This field is required';
@@ -5908,7 +5905,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50571" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61367" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

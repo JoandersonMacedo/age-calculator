@@ -170,6 +170,7 @@ body {
     min-height: 100vh;
     background-color: hsl(0, 0%, 94%);
 }
+
 .flex-container {
     display: flex;
 }
@@ -185,7 +186,6 @@ body {
 .form {
     box-sizing: border-box;
     width: 836px;
-    height: 650px;
     background-color: hsl(0, 0%, 100%);
     padding: 54px;
     border-radius: 24px 24px 192px 24px;
@@ -195,8 +195,10 @@ body {
     display: grid;
     align-items: center;
     grid-template-columns: 1fr auto;
+    position: relative;
 
     > hr {
+        position: absolute;
         border-color: hsl(0, 0%, 8%, 0.1);
         width: 100%;
     }
@@ -210,6 +212,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 1;
 
         &:hover,
         &:focus-visible {
@@ -221,17 +224,49 @@ body {
         }
     }
 }
-.inputs > div {
-    display: flex;
-    gap: 32px;
+
+@media (max-width: 868px) {
+    .form {
+        width: 348px;
+        padding: 46px 24px;
+        border-radius: 24px 24px 96px 24px;
+    }
+    .button {
+        padding: 48px 0;
+
+        > button {
+            width: 64px;
+            height: 64px;
+            justify-self: center;
+
+            > svg {
+                transform: scale(0.55);
+
+                > g {
+                    stroke-width: 4px;
+                }
+            }
+        }
+    }
+}
+.inputs {
+    > div {
+        box-sizing: border-box;
+        width: 100%;
+        display: flex;
+        gap: 32px;
+    }
 }
 
 .input-container {
     display: flex;
     flex-direction: column;
     gap: 11px;
+    flex-shrink: 1;
+    
 
     >input {
+        width: 5ch;
         font-size: 32px;
         padding: 11px 20px;
         border: 1px solid hsl(0, 0%, 86%);
@@ -239,6 +274,7 @@ body {
 
         &::placeholder {
             color: hsl(0, 0%, 8%, 0.5);
+            width: 6ch;
         }
 
         &:hover {
@@ -292,6 +328,27 @@ body {
         color: hsl(0, 100%, 67%);
     }
 }
+
+@media (max-width: 868px) {
+    .inputs > div {
+        gap: 0;
+        justify-content: space-between;
+    }
+
+    .input-container {
+        gap: 8px;
+
+        input {
+            width: 4.2ch;
+            font-size: 20px;
+            padding: 11px 16px;
+        }
+
+        .identifier {
+            font-size: 12px;
+        }
+    }
+}
 .output {
     font-size: 104px;
     font-weight: 800;
@@ -303,6 +360,12 @@ body {
 
     > label {
         text-transform: lowercase;
+    }
+}
+
+@media (max-width: 868px) {
+    .output {
+        font-size: 52px;
     }
 }
 

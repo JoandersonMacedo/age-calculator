@@ -1,14 +1,21 @@
-.inputs > div {
-    display: flex;
-    gap: 32px;
+.inputs {
+    > div {
+        box-sizing: border-box;
+        width: 100%;
+        display: flex;
+        gap: 32px;
+    }
 }
 
 .input-container {
     display: flex;
     flex-direction: column;
     gap: 11px;
+    flex-shrink: 1;
+    
 
     >input {
+        width: 5ch;
         font-size: 32px;
         padding: 11px 20px;
         border: 1px solid hsl(0, 0%, 86%);
@@ -16,6 +23,7 @@
 
         &::placeholder {
             color: hsl(0, 0%, 8%, 0.5);
+            width: 6ch;
         }
 
         &:hover {
@@ -67,5 +75,26 @@
     .message-invalid-value {
         display: block;
         color: hsl(0, 100%, 67%);
+    }
+}
+
+@media (max-width: 868px) {
+    .inputs > div {
+        gap: 0;
+        justify-content: space-between;
+    }
+
+    .input-container {
+        gap: 8px;
+
+        input {
+            width: 4.2ch;
+            font-size: 20px;
+            padding: 11px 16px;
+        }
+
+        .identifier {
+            font-size: 12px;
+        }
     }
 }
