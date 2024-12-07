@@ -5822,37 +5822,91 @@ var arayImputContainers = inputs.querySelectorAll('.input-container');
 var outputDay = document.getElementById('output-day');
 var outputMonth = document.getElementById('output-month');
 var outputYear = document.getElementById('output-year');
-arayImputContainers.forEach(function (container) {
-  container.addEventListener('input', function (event) {
-    var eventElement = event.target;
-    var value = parseInt(eventElement.value);
-    var maxValue = parseInt(eventElement.getAttribute('max'));
-    var minValue = parseInt(eventElement.getAttribute('min'));
-    var nodeArray = Array.from(arayImputContainers);
-    var formValues = {};
-    nodeArray.forEach(function (inputContainer) {
-      var input = inputContainer.querySelector('input');
-      var value = parseInt(input.value);
-      var chave = input.getAttribute('name');
-      formValues[[chave]] = value;
-    });
-    if (formValues.day && formValues.month && formValues.year && !(0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isValid()) {
-      inputs.classList.add('invalid-date');
-      messageInputs.textContent = 'Must be a valide date';
-    } else if (formValues.day && formValues.month && formValues.year && !(0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isBefore(now)) {
-      inputs.classList.add('invalid-date');
-      messageInputs.textContent = 'Must be in the past';
+var nodeArray = Array.from(arayImputContainers);
+function Status() {
+  var NO_VAlUE = 'NO_VAlUE';
+  var INVALID_VALUE = 'INVALID_VALUE';
+  var VALID_VALUE = 'VALID_VALUE';
+  function whithStatus(value, minValue, maxValue) {
+    if (value === '') {
+      return NO_VAlUE;
+    } else if (minValue <= value && value <= maxValue) {
+      return VALID_VALUE;
     } else {
-      inputs.classList.remove('invalid-date');
+      return INVALID_VALUE;
     }
-    if (value > maxValue || value < minValue) {
-      inputs.classList.remove('invalid-date');
-      container.classList.add('invalid-value');
+  }
+  return {
+    NO_VAlUE: NO_VAlUE,
+    INVALID_VALUE: INVALID_VALUE,
+    VALID_VALUE: VALID_VALUE,
+    whithStatus: whithStatus
+  };
+}
+var formElements = {};
+form.addEventListener('input', function () {
+  nodeArray.forEach(function (inputContainer) {
+    var input = inputContainer.querySelector('input');
+    var message = inputContainer.querySelector('message-invalid-value');
+    var value = parseInt(input.value);
+    var maxValue = parseInt(input.getAttribute('max'));
+    var minValue = parseInt(input.getAttribute('min'));
+    var valueStatus = Status().whithStatus(value, minValue, maxValue);
+    var nameInput = input.getAttribute('name');
+    if (valueStatus === Status().INVALID_VALUE) {
+      inputContainer.classList.add('invalid-value');
+      message.textContent = "Must be a valid ".concat(nameInput);
     } else {
-      container.classList.remove('invalid-value');
+      inputContainer.classList.remove('invalid-Value');
     }
+    formElements[[nameInput]] = {
+      container: inputContainer,
+      input: input,
+      message: message,
+      value: value,
+      valueStatus: valueStatus
+    };
   });
+  console.log(formElements);
 });
+
+// arayImputContainers.forEach((container) => {
+//     container.addEventListener('input',
+//         (event) => {
+//             const eventElement = event.target
+//             const value = parseInt(eventElement.value);
+//             const maxValue = parseInt(eventElement.getAttribute('max'));
+//             const minValue = parseInt(eventElement.getAttribute('min'));
+
+//             const nodeArray = Array.from(arayImputContainers);
+//             const formValues = {};
+//             nodeArray.forEach((inputContainer) => {
+//                 const input = inputContainer.querySelector('input');
+//                 const value = parseInt(input.value);
+//                 const chave = input.getAttribute('name')
+//                 formValues[[chave]] = value;
+//             })
+
+//             if (formValues.day && formValues.month && formValues.year && !(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid())) {
+//                 inputs.classList.add('invalid-date');
+//                 messageInputs.textContent = 'Must be a valide date';
+//             } else if (formValues.day && formValues.month && formValues.year && !((moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now)))) {
+//                 inputs.classList.add('invalid-date');
+//                 messageInputs.textContent = 'Must be in the past';
+//             } else {
+//                 inputs.classList.remove('invalid-date');
+//             }
+
+//             if (value > maxValue || value < minValue) {
+//                 inputs.classList.remove('invalid-date');
+//                 container.classList.add('invalid-value');
+//             } else {
+//                 container.classList.remove('invalid-value')
+//             }
+//         }
+//     );
+// });
+
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   var formValues = {};
