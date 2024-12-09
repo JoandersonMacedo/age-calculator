@@ -16,14 +16,32 @@ function Status() {
     const NO_VAlUE = 'NO_VAlUE';
     const INVALID_VALUE = 'INVALID_VALUE';
     const VALID_VALUE = 'VALID_VALUE';
+    const INVALID_DATE = 'INVALID_DATE';
+    const FUTURE_DATE = 'FUTURE_DATE'
+    const PAST_DATE = 'PAST_DATE';
+    const PRESENT_DATE = 'PRESENT_DATE';
 
-    function whithStatus(value, minValue, maxValue) {
-        if (value === '') {
-            return NO_VAlUE;
-        } else if (minValue <= value && value <= maxValue) {
+    function valueStatus(value, minValue, maxValue) {
+        if (minValue <= value && value <= maxValue) {
             return VALID_VALUE;
-        } else {
+        } else if (value < minValue || maxValue < value) {
             return INVALID_VALUE
+        } else {
+            return NO_VAlUE;
+        }
+    }
+
+    function dateStatus(date) {
+        if (date.isValid()) {
+            if (date.isBefore()) {
+                return PAST_DATE;
+            } else if (date.isAfter()) {
+                return FUTURE_DATE;
+            } else {
+                return PRESENT_DATE;
+            }
+        } else {
+            return INVALID_DATE;
         }
     }
 
@@ -31,28 +49,39 @@ function Status() {
         NO_VAlUE,
         INVALID_VALUE,
         VALID_VALUE,
-        whithStatus
+        INVALID_DATE,
+        PAST_DATE,
+        FUTURE_DATE,
+        valueStatus,
+        dateStatus,
     }
 }
 
 const formElements = {}
+const formDate = 'NN/NN/NN';
+console.log(nodeArray)
 form.addEventListener('input', () => {
+    debugger
     nodeArray.forEach(inputContainer => {
         const input = inputContainer.querySelector('input');
         const message = inputContainer.querySelector('message-invalid-value');
         const value = parseInt(input.value);
         const maxValue = parseInt(input.getAttribute('max'));
         const minValue = parseInt(input.getAttribute('min'));
-        const valueStatus = Status().whithStatus(value, minValue, maxValue);
+        const valueStatus = Status().valueStatus(value, minValue, maxValue);
         const nameInput = input.getAttribute('name');
 
-        if(valueStatus === Status().INVALID_VALUE) {
+        if (valueStatus === Status().VALID_VALUE) {
+            formDate = formDate.replace(/NN/, `${value}`);
+        }
+
+        if (valueStatus === Status().INVALID_VALUE) {
             inputContainer.classList.add('invalid-value');
             message.textContent = `Must be a valid ${nameInput}`;
         } else {
             inputContainer.classList.remove('invalid-Value')
-        } 
-        
+        }
+
         formElements[[nameInput]] = (
             {
                 container: inputContainer,
@@ -63,10 +92,8 @@ form.addEventListener('input', () => {
             }
         )
     });
-
-    
-
-    console.log(formElements)
+    console.log(formElements);
+    console.log(formDate);
 });
 
 // arayImputContainers.forEach((container) => {

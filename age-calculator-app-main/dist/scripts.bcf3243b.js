@@ -5814,6 +5814,7 @@ var global = arguments[3];
 
 var _moment = _interopRequireDefault(require("moment"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _readOnlyError(r) { throw new TypeError('"' + r + '" is read-only'); }
 var now = (0, _moment.default)();
 var form = document.getElementById('age-calculator');
 var inputs = form.querySelector('#inputs');
@@ -5827,32 +5828,59 @@ function Status() {
   var NO_VAlUE = 'NO_VAlUE';
   var INVALID_VALUE = 'INVALID_VALUE';
   var VALID_VALUE = 'VALID_VALUE';
-  function whithStatus(value, minValue, maxValue) {
-    if (value === '') {
-      return NO_VAlUE;
-    } else if (minValue <= value && value <= maxValue) {
+  var INVALID_DATE = 'INVALID_DATE';
+  var FUTURE_DATE = 'FUTURE_DATE';
+  var PAST_DATE = 'PAST_DATE';
+  var PRESENT_DATE = 'PRESENT_DATE';
+  function valueStatus(value, minValue, maxValue) {
+    if (minValue <= value && value <= maxValue) {
       return VALID_VALUE;
-    } else {
+    } else if (value < minValue || maxValue < value) {
       return INVALID_VALUE;
+    } else {
+      return NO_VAlUE;
+    }
+  }
+  function dateStatus(date) {
+    if (date.isValid()) {
+      if (date.isBefore()) {
+        return PAST_DATE;
+      } else if (date.isAfter()) {
+        return FUTURE_DATE;
+      } else {
+        return PRESENT_DATE;
+      }
+    } else {
+      return INVALID_DATE;
     }
   }
   return {
     NO_VAlUE: NO_VAlUE,
     INVALID_VALUE: INVALID_VALUE,
     VALID_VALUE: VALID_VALUE,
-    whithStatus: whithStatus
+    INVALID_DATE: INVALID_DATE,
+    PAST_DATE: PAST_DATE,
+    FUTURE_DATE: FUTURE_DATE,
+    valueStatus: valueStatus,
+    dateStatus: dateStatus
   };
 }
 var formElements = {};
+var formDate = 'NN/NN/NN';
+console.log(nodeArray);
 form.addEventListener('input', function () {
+  debugger;
   nodeArray.forEach(function (inputContainer) {
     var input = inputContainer.querySelector('input');
     var message = inputContainer.querySelector('message-invalid-value');
     var value = parseInt(input.value);
     var maxValue = parseInt(input.getAttribute('max'));
     var minValue = parseInt(input.getAttribute('min'));
-    var valueStatus = Status().whithStatus(value, minValue, maxValue);
+    var valueStatus = Status().valueStatus(value, minValue, maxValue);
     var nameInput = input.getAttribute('name');
+    if (valueStatus === Status().VALID_VALUE) {
+      formDate.replace(/NN/, "".concat(value)), _readOnlyError("formDate");
+    }
     if (valueStatus === Status().INVALID_VALUE) {
       inputContainer.classList.add('invalid-value');
       message.textContent = "Must be a valid ".concat(nameInput);
@@ -5868,6 +5896,7 @@ form.addEventListener('input', function () {
     };
   });
   console.log(formElements);
+  console.log(formDate);
 });
 
 // arayImputContainers.forEach((container) => {
@@ -5959,7 +5988,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61367" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65146" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
