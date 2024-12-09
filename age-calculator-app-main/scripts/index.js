@@ -16,6 +16,8 @@ function Status() {
     const NO_VAlUE = 'NO_VAlUE';
     const INVALID_VALUE = 'INVALID_VALUE';
     const VALID_VALUE = 'VALID_VALUE';
+    const ALL_IS_VALID = 'ALL_IS_VALID';
+    const SOME_IS_INVALID = 'SOME_IS_INVALID';
     const INVALID_DATE = 'INVALID_DATE';
     const FUTURE_DATE = 'FUTURE_DATE'
     const PAST_DATE = 'PAST_DATE';
@@ -29,6 +31,17 @@ function Status() {
         } else {
             return NO_VAlUE;
         }
+    }
+
+    function allValueIsValid(statusArray) {
+        // statusArray.forEach(status => {
+        //     if (status !== VALID_VALUE) {
+        //         return SOME_IS_INVALID;
+        //     }
+        // });
+        
+        // return ALL_IS_VALID;
+        
     }
 
     function dateStatus(date) {
@@ -49,51 +62,70 @@ function Status() {
         NO_VAlUE,
         INVALID_VALUE,
         VALID_VALUE,
+        ALL_IS_VALID,
+        SOME_IS_INVALID,
         INVALID_DATE,
         PAST_DATE,
         FUTURE_DATE,
+        PRESENT_DATE,
         valueStatus,
+        allValueIsValid,
         dateStatus,
     }
 }
 
-const formElements = {}
-const formDate = 'NN/NN/NN';
-console.log(nodeArray)
+
+let formDate;
+const formElements = {};
 form.addEventListener('input', () => {
-    debugger
     nodeArray.forEach(inputContainer => {
-        const input = inputContainer.querySelector('input');
         const message = inputContainer.querySelector('message-invalid-value');
+        const input = inputContainer.querySelector('input');
         const value = parseInt(input.value);
         const maxValue = parseInt(input.getAttribute('max'));
         const minValue = parseInt(input.getAttribute('min'));
         const valueStatus = Status().valueStatus(value, minValue, maxValue);
         const nameInput = input.getAttribute('name');
-
-        if (valueStatus === Status().VALID_VALUE) {
-            formDate = formDate.replace(/NN/, `${value}`);
-        }
-
+        
         if (valueStatus === Status().INVALID_VALUE) {
             inputContainer.classList.add('invalid-value');
-            message.textContent = `Must be a valid ${nameInput}`;
+            message.textContent = `Must be a valid ${nameInput}`;  
         } else {
-            inputContainer.classList.remove('invalid-Value')
+            inputContainer.classList.remove('invalid-value');
         }
 
         formElements[[nameInput]] = (
             {
                 container: inputContainer,
-                input: input,
-                message: message,
                 value: value,
-                valueStatus: valueStatus
+                valueStatus: valueStatus,
+                message: message
             }
         )
     });
-    console.log(formElements);
-    console.log(formDate);
+
+    formDate = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
+    debugger
+    const allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+    const dateStatus = Status().dateStatus(formDate);
+
+    
+    if (allStatus === Status().ALL_IS_VALID) {
+        debugger
+        switch (dateStatus) {
+            case Status().INVALID_DATE:
+                inputs.classList.add('invalid-date');
+                messageInputs.textContent = 'Must be a valide date';
+                break;
+            case !(Status().PAST_DATE):
+                inputs.classList.add('invalid-date');
+                messageInputs.textContent = 'Must be in the past';
+            default:
+                inputs.classList.remove('invalid-date');
+        }
+    } else {
+        inputs.classList.remove('invalid-date')
+    }
 });
 
 // arayImputContainers.forEach((container) => {

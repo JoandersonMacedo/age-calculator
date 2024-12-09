@@ -5814,7 +5814,6 @@ var global = arguments[3];
 
 var _moment = _interopRequireDefault(require("moment"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _readOnlyError(r) { throw new TypeError('"' + r + '" is read-only'); }
 var now = (0, _moment.default)();
 var form = document.getElementById('age-calculator');
 var inputs = form.querySelector('#inputs');
@@ -5828,6 +5827,8 @@ function Status() {
   var NO_VAlUE = 'NO_VAlUE';
   var INVALID_VALUE = 'INVALID_VALUE';
   var VALID_VALUE = 'VALID_VALUE';
+  var ALL_IS_VALID = 'ALL_IS_VALID';
+  var SOME_IS_INVALID = 'SOME_IS_INVALID';
   var INVALID_DATE = 'INVALID_DATE';
   var FUTURE_DATE = 'FUTURE_DATE';
   var PAST_DATE = 'PAST_DATE';
@@ -5840,6 +5841,15 @@ function Status() {
     } else {
       return NO_VAlUE;
     }
+  }
+  function allValueIsValid(statusArray) {
+    // statusArray.forEach(status => {
+    //     if (status !== VALID_VALUE) {
+    //         return SOME_IS_INVALID;
+    //     }
+    // });
+
+    // return ALL_IS_VALID;
   }
   function dateStatus(date) {
     if (date.isValid()) {
@@ -5858,45 +5868,61 @@ function Status() {
     NO_VAlUE: NO_VAlUE,
     INVALID_VALUE: INVALID_VALUE,
     VALID_VALUE: VALID_VALUE,
+    ALL_IS_VALID: ALL_IS_VALID,
+    SOME_IS_INVALID: SOME_IS_INVALID,
     INVALID_DATE: INVALID_DATE,
     PAST_DATE: PAST_DATE,
     FUTURE_DATE: FUTURE_DATE,
+    PRESENT_DATE: PRESENT_DATE,
     valueStatus: valueStatus,
+    allValueIsValid: allValueIsValid,
     dateStatus: dateStatus
   };
 }
+var formDate;
 var formElements = {};
-var formDate = 'NN/NN/NN';
-console.log(nodeArray);
 form.addEventListener('input', function () {
-  debugger;
   nodeArray.forEach(function (inputContainer) {
-    var input = inputContainer.querySelector('input');
     var message = inputContainer.querySelector('message-invalid-value');
+    var input = inputContainer.querySelector('input');
     var value = parseInt(input.value);
     var maxValue = parseInt(input.getAttribute('max'));
     var minValue = parseInt(input.getAttribute('min'));
     var valueStatus = Status().valueStatus(value, minValue, maxValue);
     var nameInput = input.getAttribute('name');
-    if (valueStatus === Status().VALID_VALUE) {
-      formDate.replace(/NN/, "".concat(value)), _readOnlyError("formDate");
-    }
     if (valueStatus === Status().INVALID_VALUE) {
       inputContainer.classList.add('invalid-value');
       message.textContent = "Must be a valid ".concat(nameInput);
     } else {
-      inputContainer.classList.remove('invalid-Value');
+      inputContainer.classList.remove('invalid-value');
     }
     formElements[[nameInput]] = {
       container: inputContainer,
-      input: input,
-      message: message,
       value: value,
-      valueStatus: valueStatus
+      valueStatus: valueStatus,
+      message: message
     };
   });
-  console.log(formElements);
-  console.log(formDate);
+  formDate = (0, _moment.default)("".concat(formElements.day.value, "/").concat(formElements.month.value, "/").concat(formElements.year.value), 'D/M/YYYY');
+  debugger;
+  var allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+  var dateStatus = Status().dateStatus(formDate);
+  if (allStatus === Status().ALL_IS_VALID) {
+    debugger;
+    switch (dateStatus) {
+      case Status().INVALID_DATE:
+        inputs.classList.add('invalid-date');
+        messageInputs.textContent = 'Must be a valide date';
+        break;
+      case !Status().PAST_DATE:
+        inputs.classList.add('invalid-date');
+        messageInputs.textContent = 'Must be in the past';
+      default:
+        inputs.classList.remove('invalid-date');
+    }
+  } else {
+    inputs.classList.remove('invalid-date');
+  }
 });
 
 // arayImputContainers.forEach((container) => {
