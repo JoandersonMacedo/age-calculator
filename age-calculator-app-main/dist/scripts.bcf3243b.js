@@ -5824,11 +5824,11 @@ var outputMonth = document.getElementById('output-month');
 var outputYear = document.getElementById('output-year');
 var nodeArray = Array.from(arayImputContainers);
 function Status() {
-  var NO_VAlUE = 'NO_VAlUE';
+  var NO_VALUE = 'NO_VALUE';
   var INVALID_VALUE = 'INVALID_VALUE';
   var VALID_VALUE = 'VALID_VALUE';
   var ALL_IS_VALID = 'ALL_IS_VALID';
-  var SOME_IS_INVALID = 'SOME_IS_INVALID';
+  var HAVE_INVALID = 'HAVE_INVALID';
   var INVALID_DATE = 'INVALID_DATE';
   var FUTURE_DATE = 'FUTURE_DATE';
   var PAST_DATE = 'PAST_DATE';
@@ -5839,17 +5839,27 @@ function Status() {
     } else if (value < minValue || maxValue < value) {
       return INVALID_VALUE;
     } else {
-      return NO_VAlUE;
+      return NO_VALUE;
     }
   }
   function allValueIsValid(statusArray) {
+    debugger;
+    var haveInvalid = false;
+    for (var i = 0; i <= statusArray.length; i++) {
+      if (statusArray[i] !== VALID_VALUE) {
+        haveInvalid = true;
+      }
+    }
     // statusArray.forEach(status => {
     //     if (status !== VALID_VALUE) {
-    //         return SOME_IS_INVALID;
+    //         haveInvalid = true
     //     }
-    // });
+    // })
 
-    // return ALL_IS_VALID;
+    if (haveInvalid) {
+      return HAVE_INVALID;
+    }
+    return ALL_IS_VALID;
   }
   function dateStatus(date) {
     if (date.isValid()) {
@@ -5865,11 +5875,11 @@ function Status() {
     }
   }
   return {
-    NO_VAlUE: NO_VAlUE,
+    NO_VALUE: NO_VALUE,
     INVALID_VALUE: INVALID_VALUE,
     VALID_VALUE: VALID_VALUE,
     ALL_IS_VALID: ALL_IS_VALID,
-    SOME_IS_INVALID: SOME_IS_INVALID,
+    HAVE_INVALID: HAVE_INVALID,
     INVALID_DATE: INVALID_DATE,
     PAST_DATE: PAST_DATE,
     FUTURE_DATE: FUTURE_DATE,
@@ -5904,21 +5914,17 @@ form.addEventListener('input', function () {
     };
   });
   formDate = (0, _moment.default)("".concat(formElements.day.value, "/").concat(formElements.month.value, "/").concat(formElements.year.value), 'D/M/YYYY');
-  debugger;
   var allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
   var dateStatus = Status().dateStatus(formDate);
   if (allStatus === Status().ALL_IS_VALID) {
-    debugger;
-    switch (dateStatus) {
-      case Status().INVALID_DATE:
-        inputs.classList.add('invalid-date');
-        messageInputs.textContent = 'Must be a valide date';
-        break;
-      case !Status().PAST_DATE:
-        inputs.classList.add('invalid-date');
-        messageInputs.textContent = 'Must be in the past';
-      default:
-        inputs.classList.remove('invalid-date');
+    if (dateStatus === Status().INVALID_DATE) {
+      inputs.classList.add('invalid-date');
+      messageInputs.textContent = 'Must be a valide date';
+    } else if (dateStatus === (Status().FUTURE_DATE || Status().PRESENT_DATE)) {
+      inputs.classList.add('invalid-date');
+      messageInputs.textContent = 'Must be in the past';
+    } else {
+      inputs.classList.remove('invalid-date');
     }
   } else {
     inputs.classList.remove('invalid-date');
@@ -6014,7 +6020,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65146" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52417" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -13,11 +13,11 @@ const outputYear = document.getElementById('output-year');
 const nodeArray = Array.from(arayImputContainers);
 
 function Status() {
-    const NO_VAlUE = 'NO_VAlUE';
+    const NO_VALUE = 'NO_VALUE';
     const INVALID_VALUE = 'INVALID_VALUE';
     const VALID_VALUE = 'VALID_VALUE';
     const ALL_IS_VALID = 'ALL_IS_VALID';
-    const SOME_IS_INVALID = 'SOME_IS_INVALID';
+    const HAVE_INVALID = 'HAVE_INVALID';
     const INVALID_DATE = 'INVALID_DATE';
     const FUTURE_DATE = 'FUTURE_DATE'
     const PAST_DATE = 'PAST_DATE';
@@ -29,19 +29,29 @@ function Status() {
         } else if (value < minValue || maxValue < value) {
             return INVALID_VALUE
         } else {
-            return NO_VAlUE;
+            return NO_VALUE;
         }
     }
 
     function allValueIsValid(statusArray) {
+        debugger
+        let haveInvalid = false;
+        for(let i = 0; i <= statusArray.length; i++) {
+            if (statusArray[i] !== VALID_VALUE) {
+                haveInvalid = true;
+            }
+        }
         // statusArray.forEach(status => {
         //     if (status !== VALID_VALUE) {
-        //         return SOME_IS_INVALID;
+        //         haveInvalid = true
         //     }
-        // });
-        
-        // return ALL_IS_VALID;
-        
+        // })
+
+        if (haveInvalid) {
+            return HAVE_INVALID;
+        }
+
+        return ALL_IS_VALID;
     }
 
     function dateStatus(date) {
@@ -59,11 +69,11 @@ function Status() {
     }
 
     return {
-        NO_VAlUE,
+        NO_VALUE,
         INVALID_VALUE,
         VALID_VALUE,
         ALL_IS_VALID,
-        SOME_IS_INVALID,
+        HAVE_INVALID,
         INVALID_DATE,
         PAST_DATE,
         FUTURE_DATE,
@@ -86,10 +96,10 @@ form.addEventListener('input', () => {
         const minValue = parseInt(input.getAttribute('min'));
         const valueStatus = Status().valueStatus(value, minValue, maxValue);
         const nameInput = input.getAttribute('name');
-        
+
         if (valueStatus === Status().INVALID_VALUE) {
             inputContainer.classList.add('invalid-value');
-            message.textContent = `Must be a valid ${nameInput}`;  
+            message.textContent = `Must be a valid ${nameInput}`;
         } else {
             inputContainer.classList.remove('invalid-value');
         }
@@ -105,23 +115,18 @@ form.addEventListener('input', () => {
     });
 
     formDate = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
-    debugger
     const allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
     const dateStatus = Status().dateStatus(formDate);
 
-    
     if (allStatus === Status().ALL_IS_VALID) {
-        debugger
-        switch (dateStatus) {
-            case Status().INVALID_DATE:
-                inputs.classList.add('invalid-date');
-                messageInputs.textContent = 'Must be a valide date';
-                break;
-            case !(Status().PAST_DATE):
-                inputs.classList.add('invalid-date');
-                messageInputs.textContent = 'Must be in the past';
-            default:
-                inputs.classList.remove('invalid-date');
+        if (dateStatus === Status().INVALID_DATE) {
+            inputs.classList.add('invalid-date');
+            messageInputs.textContent = 'Must be a valide date';
+        } else if (dateStatus === (Status().FUTURE_DATE || Status().PRESENT_DATE)) {
+            inputs.classList.add('invalid-date');
+            messageInputs.textContent = 'Must be in the past';
+        } else {
+            inputs.classList.remove('invalid-date');
         }
     } else {
         inputs.classList.remove('invalid-date')
