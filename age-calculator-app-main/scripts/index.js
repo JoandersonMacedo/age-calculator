@@ -34,23 +34,11 @@ function Status() {
     }
 
     function allValueIsValid(statusArray) {
-        debugger
-        let haveInvalid = false;
         for(let i = 0; i <= statusArray.length; i++) {
             if (statusArray[i] !== VALID_VALUE) {
-                haveInvalid = true;
+                return HAVE_INVALID;
             }
         }
-        // statusArray.forEach(status => {
-        //     if (status !== VALID_VALUE) {
-        //         haveInvalid = true
-        //     }
-        // })
-
-        if (haveInvalid) {
-            return HAVE_INVALID;
-        }
-
         return ALL_IS_VALID;
     }
 
@@ -89,7 +77,7 @@ let formDate;
 const formElements = {};
 form.addEventListener('input', () => {
     nodeArray.forEach(inputContainer => {
-        const message = inputContainer.querySelector('message-invalid-value');
+        const message = inputContainer.querySelector('.message-invalid-value');
         const input = inputContainer.querySelector('input');
         const value = parseInt(input.value);
         const maxValue = parseInt(input.getAttribute('max'));

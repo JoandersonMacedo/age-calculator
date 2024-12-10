@@ -5843,21 +5843,10 @@ function Status() {
     }
   }
   function allValueIsValid(statusArray) {
-    debugger;
-    var haveInvalid = false;
     for (var i = 0; i <= statusArray.length; i++) {
       if (statusArray[i] !== VALID_VALUE) {
-        haveInvalid = true;
+        return HAVE_INVALID;
       }
-    }
-    // statusArray.forEach(status => {
-    //     if (status !== VALID_VALUE) {
-    //         haveInvalid = true
-    //     }
-    // })
-
-    if (haveInvalid) {
-      return HAVE_INVALID;
     }
     return ALL_IS_VALID;
   }
@@ -5893,7 +5882,7 @@ var formDate;
 var formElements = {};
 form.addEventListener('input', function () {
   nodeArray.forEach(function (inputContainer) {
-    var message = inputContainer.querySelector('message-invalid-value');
+    var message = inputContainer.querySelector('.message-invalid-value');
     var input = inputContainer.querySelector('input');
     var value = parseInt(input.value);
     var maxValue = parseInt(input.getAttribute('max'));
