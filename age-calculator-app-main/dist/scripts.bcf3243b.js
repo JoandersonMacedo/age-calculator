@@ -5878,7 +5878,7 @@ function Status() {
     dateStatus: dateStatus
   };
 }
-var formDate;
+var formDate = {};
 var formElements = {};
 form.addEventListener('input', function () {
   nodeArray.forEach(function (inputContainer) {
@@ -5902,14 +5902,14 @@ form.addEventListener('input', function () {
       message: message
     };
   });
-  formDate = (0, _moment.default)("".concat(formElements.day.value, "/").concat(formElements.month.value, "/").concat(formElements.year.value), 'D/M/YYYY');
-  var allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
-  var dateStatus = Status().dateStatus(formDate);
-  if (allStatus === Status().ALL_IS_VALID) {
-    if (dateStatus === Status().INVALID_DATE) {
+  formDate.date = (0, _moment.default)("".concat(formElements.day.value, "/").concat(formElements.month.value, "/").concat(formElements.year.value), 'D/M/YYYY');
+  formDate.allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+  formDate.dateStatus = Status().dateStatus(formDate.date);
+  if (formDate.allStatus === Status().ALL_IS_VALID) {
+    if (formDate.dateStatus === Status().INVALID_DATE) {
       inputs.classList.add('invalid-date');
       messageInputs.textContent = 'Must be a valide date';
-    } else if (dateStatus === (Status().FUTURE_DATE || Status().PRESENT_DATE)) {
+    } else if (formDate.dateStatus === (Status().FUTURE_DATE || Status().PRESENT_DATE)) {
       inputs.classList.add('invalid-date');
       messageInputs.textContent = 'Must be in the past';
     } else {
@@ -5919,71 +5919,60 @@ form.addEventListener('input', function () {
     inputs.classList.remove('invalid-date');
   }
 });
-
-// arayImputContainers.forEach((container) => {
-//     container.addEventListener('input',
-//         (event) => {
-//             const eventElement = event.target
-//             const value = parseInt(eventElement.value);
-//             const maxValue = parseInt(eventElement.getAttribute('max'));
-//             const minValue = parseInt(eventElement.getAttribute('min'));
-
-//             const nodeArray = Array.from(arayImputContainers);
-//             const formValues = {};
-//             nodeArray.forEach((inputContainer) => {
-//                 const input = inputContainer.querySelector('input');
-//                 const value = parseInt(input.value);
-//                 const chave = input.getAttribute('name')
-//                 formValues[[chave]] = value;
-//             })
-
-//             if (formValues.day && formValues.month && formValues.year && !(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid())) {
-//                 inputs.classList.add('invalid-date');
-//                 messageInputs.textContent = 'Must be a valide date';
-//             } else if (formValues.day && formValues.month && formValues.year && !((moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now)))) {
-//                 inputs.classList.add('invalid-date');
-//                 messageInputs.textContent = 'Must be in the past';
-//             } else {
-//                 inputs.classList.remove('invalid-date');
-//             }
-
-//             if (value > maxValue || value < minValue) {
-//                 inputs.classList.remove('invalid-date');
-//                 container.classList.add('invalid-value');
-//             } else {
-//                 container.classList.remove('invalid-value')
-//             }
-//         }
-//     );
-// });
-
 form.addEventListener('submit', function (event) {
   event.preventDefault();
-  var formValues = {};
-  arayImputContainers.forEach(function (container) {
-    var input = container.querySelector('input');
-    var messageInput = container.querySelector('.message-invalid-value');
-    var value = parseInt(input.value);
-    var maxValue = parseInt(input.getAttribute('max'));
-    var minValue = parseInt(input.getAttribute('min'));
-    if (input.value === '') {
-      container.classList.add('invalid-value');
-      messageInput.textContent = 'This field is required';
-    } else if (value <= maxValue && value >= minValue) {
-      container.classList.remove('invalid-value');
-      var chave = input.getAttribute('name');
-      formValues[[chave]] = value;
-    }
-  });
-  if (formValues.day && formValues.month && formValues.year && (0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isValid() && formValues.year && (0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY').isBefore(now)) {
-    var toNowYears = now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year), 'D-M-YYYY'), 'years');
-    var toNowMonths = now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month, "-").concat(formValues.year + toNowYears), 'D-M-YYYY'), 'months');
-    var toNowDays = now.diff((0, _moment.default)("".concat(formValues.day, "-").concat(formValues.month + toNowMonths, "-").concat(formValues.year + toNowYears), 'D-M-YYYY'), 'days');
+  if (formDate.allStatus === Status.ALL_IS_VALID && formDate.dateStatus === Status.PAST_DATE) {
+    var toNowYears = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value, "-").concat(formElements.year.value), 'D-M-YYYY'), 'years');
+    var toNowMonths = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value, "-").concat(formElements.year.value + toNowYears), 'D-M-YYYY'), 'months');
+    var toNowDays = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value + toNowMonths, "-").concat(formElements.year.value + toNowYears), 'D-M-YYYY'), 'days');
     outputDay.textContent = "".concat(toNowDays);
     outputMonth.textContent = "".concat(toNowMonths);
     outputYear.textContent = "".concat(toNowYears);
+  } else {
+    nodeArray.forEach(function (inputContainer) {
+      var nameInput = inputContainer.querySelector('input').getAttribute('name');
+      var formElement = formElements[[nameInput]];
+      if (formElement.valueStatus !== Status().VALID_VALUE && formElement.valueStatus === Status().NO_VALUE) {
+        formElement.container.classList.add('invalid-value');
+        formElements.message.textContent = 'This field is required';
+      }
+    });
   }
 });
+
+// form.addEventListener('submit', (event) => {
+//     event.preventDefault();
+
+//     const formValues = {};
+//     arayImputContainers.forEach((container) => {
+//         const input = container.querySelector('input');
+//         const messageInput = container.querySelector('.message-invalid-value');
+//         const value = parseInt(input.value);
+//         const maxValue = parseInt(input.getAttribute('max'));
+//         const minValue = parseInt(input.getAttribute('min'));
+
+//         if (input.value === '') {
+//             container.classList.add('invalid-value');
+//             messageInput.textContent = 'This field is required';
+//         } else if (value <= maxValue && value >= minValue) {
+//             container.classList.remove('invalid-value');
+//             const chave = input.getAttribute('name');
+//             formValues[[chave]] = value;
+//         }
+//     })
+
+//     if (formValues.day && formValues.month && formValues.year &&
+//         (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid()) &&
+//         formValues.year && (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now))) {
+//         const toNowYears = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY'), 'years');
+//         const toNowMonths = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'months');
+//         const toNowDays = now.diff(moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'days');
+
+//         outputDay.textContent = `${toNowDays}`
+//         outputMonth.textContent = `${toNowMonths}`
+//         outputYear.textContent = `${toNowYears}`
+//     }
+// });
 },{"moment":"node_modules/moment/moment.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -6009,7 +5998,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52417" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50934" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
