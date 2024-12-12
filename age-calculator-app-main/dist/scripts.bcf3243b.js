@@ -5815,74 +5815,72 @@ var global = arguments[3];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.allValueIsValid = allValueIsValid;
+exports.dateStatus = dateStatus;
 exports.default = void 0;
-function Status() {
-  var NO_VALUE = 'NO_VALUE';
-  var INVALID_VALUE = 'INVALID_VALUE';
-  var VALID_VALUE = 'VALID_VALUE';
-  var ALL_IS_VALID = 'ALL_IS_VALID';
-  var HAVE_INVALID = 'HAVE_INVALID';
-  var INVALID_DATE = 'INVALID_DATE';
-  var FUTURE_DATE = 'FUTURE_DATE';
-  var PAST_DATE = 'PAST_DATE';
-  var PRESENT_DATE = 'PRESENT_DATE';
-  function valueStatus(value, minValue, maxValue) {
-    if (minValue <= value && value <= maxValue) {
-      return VALID_VALUE;
-    } else if (value < minValue || maxValue < value) {
-      return INVALID_VALUE;
-    } else {
-      return NO_VALUE;
-    }
+exports.valueStatus = valueStatus;
+var _moment = _interopRequireDefault(require("moment"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var NO_VALUE = 'NO_VALUE';
+var INVALID_VALUE = 'INVALID_VALUE';
+var VALID_VALUE = 'VALID_VALUE';
+var ALL_IS_VALID = 'ALL_IS_VALID';
+var HAVE_INVALID = 'HAVE_INVALID';
+var INVALID_DATE = 'INVALID_DATE';
+var FUTURE_DATE = 'FUTURE_DATE';
+var PAST_DATE = 'PAST_DATE';
+var PRESENT_DATE = 'PRESENT_DATE';
+function valueStatus(value, minValue, maxValue) {
+  if (minValue <= value && value <= maxValue) {
+    return VALID_VALUE;
+  } else if (value < minValue || maxValue < value) {
+    return INVALID_VALUE;
+  } else {
+    return NO_VALUE;
   }
-  function allValueIsValid(statusArray) {
-    for (var i in statusArray) {
-      if (statusArray[i] !== VALID_VALUE) {
-        return HAVE_INVALID;
-      }
-    }
-    return ALL_IS_VALID;
-  }
-  function dateStatus(date) {
-    if (date.isValid()) {
-      if (date.isBefore()) {
-        return PAST_DATE;
-      } else if (date.isAfter()) {
-        return FUTURE_DATE;
-      } else {
-        return PRESENT_DATE;
-      }
-    } else {
-      return INVALID_DATE;
-    }
-  }
-  return {
-    VALID_VALUE: VALID_VALUE,
-    INVALID_VALUE: INVALID_VALUE,
-    NO_VALUE: NO_VALUE,
-    PAST_DATE: PAST_DATE,
-    PRESENT_DATE: PRESENT_DATE,
-    FUTURE_DATE: FUTURE_DATE,
-    INVALID_DATE: INVALID_DATE,
-    ALL_IS_VALID: ALL_IS_VALID,
-    HAVE_INVALID: HAVE_INVALID,
-    valueStatus: valueStatus,
-    allValueIsValid: allValueIsValid,
-    dateStatus: dateStatus
-  };
 }
-var _default = exports.default = Status;
-},{}],"models/InputContainer.js":[function(require,module,exports) {
+function allValueIsValid(statusArray) {
+  for (var i in statusArray) {
+    if (statusArray[i] !== VALID_VALUE) {
+      return HAVE_INVALID;
+    }
+  }
+  return ALL_IS_VALID;
+}
+function dateStatus(date) {
+  if (date.isValid()) {
+    if (date.isBefore((0, _moment.default)().startOf('day'))) {
+      return PAST_DATE;
+    } else if (date.isAfter((0, _moment.default)().startOf('day'))) {
+      return FUTURE_DATE;
+    } else {
+      return PRESENT_DATE;
+    }
+  } else {
+    return INVALID_DATE;
+  }
+}
+var status = {
+  VALID_VALUE: VALID_VALUE,
+  INVALID_VALUE: INVALID_VALUE,
+  NO_VALUE: NO_VALUE,
+  PAST_DATE: PAST_DATE,
+  PRESENT_DATE: PRESENT_DATE,
+  FUTURE_DATE: FUTURE_DATE,
+  INVALID_DATE: INVALID_DATE,
+  ALL_IS_VALID: ALL_IS_VALID,
+  HAVE_INVALID: HAVE_INVALID
+};
+var _default = exports.default = status;
+},{"moment":"node_modules/moment/moment.js"}],"models/InputContainer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Status = _interopRequireDefault(require("./Status"));
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var _Status = require("./Status");
 function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _message) {
-  var status = (0, _Status.default)();
   return {
     container: function container() {
       return _container;
@@ -5906,7 +5904,7 @@ function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _m
       return parseInt(_input.value);
     },
     valueStatus: function valueStatus() {
-      return status.valueStatus(parseInt(_input.value), _minValue, _maxValue);
+      return (0, _Status.valueStatus)(parseInt(_input.value), _minValue, _maxValue);
     }
   };
 }
@@ -5915,10 +5913,13 @@ var _default = exports.default = InputContainer;
 "use strict";
 
 var _moment = _interopRequireDefault(require("moment"));
-var _Status = _interopRequireDefault(require("../models/Status"));
+var _Status = _interopRequireWildcard(require("../models/Status"));
 var _InputContainer = _interopRequireDefault(require("../models/InputContainer"));
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-var now = (0, _moment.default)();
+var today = (0, _moment.default)().startOf('day');
+console.log(today);
 var form = document.getElementById('age-calculator');
 var inputs = form.querySelector('#inputs');
 var messageInputs = inputs.querySelector('.message-invalid-date');
@@ -5927,63 +5928,33 @@ var outputDay = document.getElementById('output-day');
 var outputMonth = document.getElementById('output-month');
 var outputYear = document.getElementById('output-year');
 var nodeArray = Array.from(arayImputContainers);
-var status = (0, _Status.default)();
-var formDate = {};
-var formElements = {};
 var inputContainers = {};
+var formDate = {};
 nodeArray.forEach(function (container) {
-  var message = container.querySelector('.message-invalid-value');
   var input = container.querySelector('.input');
   var nameInput = input.getAttribute('name');
-  var value = parseInt(input.value);
   var maxValue = parseInt(input.getAttribute('max'));
   var minValue = parseInt(input.getAttribute('min'));
-  var valueStatus = status.valueStatus(value, minValue, maxValue);
-  formElements[nameInput] = {
-    container: container,
-    input: input,
-    nameInput: nameInput,
-    minValue: minValue,
-    maxValue: maxValue,
-    value: value,
-    message: message,
-    valueStatus: valueStatus
-  };
+  var message = container.querySelector('.message-invalid-value');
   inputContainers[nameInput] = (0, _InputContainer.default)(container, input, nameInput, minValue, maxValue, message);
 });
 form.addEventListener('input', function () {
-  // for (const property in formElements) {
-  //     formElements[property].value = parseInt(formElements[property].input.value);
-  //     formElements[property].valueStatus =
-  //         status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
-
-  //     if (formElements[property].valueStatus === status.INVALID_VALUE) {
-  //         formElements[property].container.classList.add('invalid-value');
-  //         formElements[property].message.textContent = `Must be a valid ${formElements[property].nameInput}`;
-  //     } else {
-  //         formElements[property].container.classList.remove('invalid-value');
-  //     }
-  // }
-
   for (var property in inputContainers) {
-    if (inputContainers[property].valueStatus() === status.INVALID_VALUE) {
+    if (inputContainers[property].valueStatus() === _Status.default.INVALID_VALUE) {
       inputContainers[property].container().classList.add('invalid-value');
       inputContainers[property].message().textContent = "Must be a valid ".concat(inputContainers[property].nameInput());
     } else {
       inputContainers[property].container().classList.remove('invalid-value');
     }
   }
-
-  // formDate.date = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
-  // formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
   formDate.date = (0, _moment.default)("".concat(inputContainers.day.value(), "/").concat(inputContainers.month.value(), "/").concat(inputContainers.year.value()), 'D/M/YYYY');
-  formDate.allStatus = status.allValueIsValid([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
-  formDate.dateStatus = status.dateStatus(formDate.date);
-  if (formDate.allStatus === status.ALL_IS_VALID) {
-    if (formDate.dateStatus === status.INVALID_DATE) {
+  formDate.allStatus = (0, _Status.allValueIsValid)([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
+  formDate.dateStatus = (0, _Status.dateStatus)(formDate.date);
+  if (formDate.allStatus === _Status.default.ALL_IS_VALID) {
+    if (formDate.dateStatus === _Status.default.INVALID_DATE) {
       inputs.classList.add('invalid-date');
       messageInputs.textContent = 'Must be a valide date';
-    } else if (formDate.dateStatus === (status.FUTURE_DATE || status.PRESENT_DATE)) {
+    } else if (formDate.dateStatus !== _Status.default.PAST_DATE) {
       inputs.classList.add('invalid-date');
       messageInputs.textContent = 'Must be in the past';
     } else {
@@ -5995,27 +5966,16 @@ form.addEventListener('input', function () {
 });
 form.addEventListener('submit', function (event) {
   event.preventDefault();
-  if (formDate.allStatus === status.ALL_IS_VALID && formDate.dateStatus === status.PAST_DATE) {
-    // const toNowYears = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value}`, 'D-M-YYYY'), 'years');
-    // const toNowMonths = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'months');
-    // const toNowDays = now.diff(moment(`${formElements.day.value}-${formElements.month.value + toNowMonths}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'days');
-
-    var toNowYears = now.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value()), 'D-M-YYYY'), 'years');
-    var toNowMonths = now.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'months');
-    var toNowDays = now.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value() + toNowMonths, "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'days');
+  if (formDate.allStatus === _Status.default.ALL_IS_VALID && formDate.dateStatus === _Status.default.PAST_DATE) {
+    var toNowYears = today.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value()), 'D-M-YYYY'), 'years');
+    var toNowMonths = today.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'months');
+    var toNowDays = today.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value() + toNowMonths, "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'days');
     outputDay.textContent = "".concat(toNowDays);
     outputMonth.textContent = "".concat(toNowMonths);
     outputYear.textContent = "".concat(toNowYears);
   } else {
-    // for (const property in formElements) {
-    //     if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
-    //         formElements[property].container.classList.add('invalid-value')
-    //         formElements[property].message.textContent = 'This field is required';
-    //     }
-    // }
-
     for (var property in inputContainers) {
-      if (inputContainers[property].valueStatus() !== status.VALID_VALUE && inputContainers[property].valueStatus() === status.NO_VALUE) {
+      if (inputContainers[property].valueStatus() !== _Status.default.VALID_VALUE && inputContainers[property].valueStatus() === _Status.default.NO_VALUE) {
         inputContainers[property].container().classList.add('invalid-value');
         inputContainers[property].message().textContent = 'This field is required';
       }
