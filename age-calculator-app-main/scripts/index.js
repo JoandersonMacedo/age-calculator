@@ -1,5 +1,6 @@
 import moment from "moment";
 import Status from "../models/Status";
+import InputContainer from "../models/InputContainer";
 
 const now = moment();
 
@@ -16,15 +17,16 @@ const nodeArray = Array.from(arayImputContainers);
 const status = Status();
 const formDate = {};
 const formElements = {};
+const inputContainers = {}
 
 nodeArray.forEach((container) => {
     const message = container.querySelector('.message-invalid-value');
-    const input = container.querySelector('input');
+    const input = container.querySelector('.input');
+    const nameInput = input.getAttribute('name');
     const value = parseInt(input.value);
     const maxValue = parseInt(input.getAttribute('max'));
     const minValue = parseInt(input.getAttribute('min'));
     const valueStatus = status.valueStatus(value, minValue, maxValue);
-    const nameInput = input.getAttribute('name');
 
     formElements[nameInput] = (
         {
@@ -38,50 +40,39 @@ nodeArray.forEach((container) => {
             valueStatus: valueStatus,
         }
     )
+
+    inputContainers[nameInput] = InputContainer(container, input, nameInput, minValue, maxValue, message);
 });
 
+
 form.addEventListener('input', () => {
-    // nodeArray.forEach((inputContainer) => {
-    //     const message = inputContainer.querySelector('.message-invalid-value');
-    //     const input = inputContainer.querySelector('input');
-    //     const value = parseInt(input.value);
-    //     const maxValue = parseInt(input.getAttribute('max'));
-    //     const minValue = parseInt(input.getAttribute('min'));
-    //     const valueStatus = status.valueStatus(value, minValue, maxValue);
-    //     const nameInput = input.getAttribute('name');
 
-    //     if (valueStatus === status.INVALID_VALUE) {
-    //         inputContainer.classList.add('invalid-value');
-    //         message.textContent = `Must be a valid ${nameInput}`;
+    // for (const property in formElements) {
+    //     formElements[property].value = parseInt(formElements[property].input.value);
+    //     formElements[property].valueStatus =
+    //         status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
+
+    //     if (formElements[property].valueStatus === status.INVALID_VALUE) {
+    //         formElements[property].container.classList.add('invalid-value');
+    //         formElements[property].message.textContent = `Must be a valid ${formElements[property].nameInput}`;
     //     } else {
-    //         inputContainer.classList.remove('invalid-value');
+    //         formElements[property].container.classList.remove('invalid-value');
     //     }
+    // }
 
-    //     formElements[[nameInput]] = (
-    //         {
-    //             container: inputContainer,
-    //             value: value,
-    //             valueStatus: valueStatus,
-    //             message: message
-    //         }
-    //     )
-    // });
-
-    for (const property in formElements) {
-        formElements[property].value = parseInt(formElements[property].input.value);
-        formElements[property].valueStatus =
-            status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
-
-        if (formElements[property].valueStatus === status.INVALID_VALUE) {
-            formElements[property].container.classList.add('invalid-value');
-            formElements[property].message.textContent = `Must be a valid ${formElements[property].nameInput}`;
+    for (const property in inputContainers) {
+        if (inputContainers[property].valueStatus() === status.INVALID_VALUE) {
+            inputContainers[property].container().classList.add('invalid-value');
+            inputContainers[property].message().textContent = `Must be a valid ${inputContainers[property].nameInput()}`;
         } else {
-            formElements[property].container.classList.remove('invalid-value');
+            inputContainers[property].container().classList.remove('invalid-value');
         }
     }
 
-    formDate.date = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
-    formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+    // formDate.date = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
+    // formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+    formDate.date = moment(`${inputContainers.day.value()}/${inputContainers.month.value()}/${inputContainers.year.value()}`, 'D/M/YYYY');
+    formDate.allStatus = status.allValueIsValid([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
     formDate.dateStatus = status.dateStatus(formDate.date);
 
     if (formDate.allStatus === status.ALL_IS_VALID) {
@@ -103,53 +94,31 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     if (formDate.allStatus === status.ALL_IS_VALID && formDate.dateStatus === status.PAST_DATE) {
-        const toNowYears = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value}`, 'D-M-YYYY'), 'years');
-        const toNowMonths = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'months');
-        const toNowDays = now.diff(moment(`${formElements.day.value}-${formElements.month.value + toNowMonths}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'days');
+        // const toNowYears = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value}`, 'D-M-YYYY'), 'years');
+        // const toNowMonths = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'months');
+        // const toNowDays = now.diff(moment(`${formElements.day.value}-${formElements.month.value + toNowMonths}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'days');
 
+        const toNowYears = now.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value()}`, 'D-M-YYYY'), 'years');
+        const toNowMonths = now.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'months');
+        const toNowDays = now.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value() + toNowMonths}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'days');
+        
         outputDay.textContent = `${toNowDays}`
         outputMonth.textContent = `${toNowMonths}`
         outputYear.textContent = `${toNowYears}`
     } else {
-        for (const property in formElements) {
-            if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
-                formElements[property].container.classList.add('invalid-value')
-                formElements[property].message.textContent = 'This field is required';
+        // for (const property in formElements) {
+        //     if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
+        //         formElements[property].container.classList.add('invalid-value')
+        //         formElements[property].message.textContent = 'This field is required';
+        //     }
+        // }
+
+        for (const property in inputContainers) {
+            if (inputContainers[property].valueStatus() !== status.VALID_VALUE && inputContainers[property].valueStatus() === status.NO_VALUE) {
+                inputContainers[property].container().classList.add('invalid-value')
+                inputContainers[property].message().textContent = 'This field is required';
             }
         }
     }
 });
 
-// form.addEventListener('submit', (event) => {
-//     event.preventDefault();
-
-//     const formValues = {};
-//     arayImputContainers.forEach((container) => {
-//         const input = container.querySelector('input');
-//         const messageInput = container.querySelector('.message-invalid-value');
-//         const value = parseInt(input.value);
-//         const maxValue = parseInt(input.getAttribute('max'));
-//         const minValue = parseInt(input.getAttribute('min'));
-
-//         if (input.value === '') {
-//             container.classList.add('invalid-value');
-//             messageInput.textContent = 'This field is required';
-//         } else if (value <= maxValue && value >= minValue) {
-//             container.classList.remove('invalid-value');
-//             const chave = input.getAttribute('name');
-//             formValues[[chave]] = value;
-//         }
-//     })
-
-//     if (formValues.day && formValues.month && formValues.year &&
-//         (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid()) &&
-//         formValues.year && (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now))) {
-//         const toNowYears = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY'), 'years');
-//         const toNowMonths = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'months');
-//         const toNowDays = now.diff(moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'days');
-
-//         outputDay.textContent = `${toNowDays}`
-//         outputMonth.textContent = `${toNowMonths}`
-//         outputYear.textContent = `${toNowYears}`
-//     }
-// });

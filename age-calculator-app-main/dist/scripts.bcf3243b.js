@@ -5872,11 +5872,51 @@ function Status() {
   };
 }
 var _default = exports.default = Status;
-},{}],"scripts/index.js":[function(require,module,exports) {
+},{}],"models/InputContainer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _Status = _interopRequireDefault(require("./Status"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _message) {
+  var status = (0, _Status.default)();
+  return {
+    container: function container() {
+      return _container;
+    },
+    input: function input() {
+      return _input;
+    },
+    nameInput: function nameInput() {
+      return _nameInput;
+    },
+    minValue: function minValue() {
+      return _minValue;
+    },
+    maxValue: function maxValue() {
+      return _maxValue;
+    },
+    message: function message() {
+      return _message;
+    },
+    value: function value() {
+      return parseInt(_input.value);
+    },
+    valueStatus: function valueStatus() {
+      return status.valueStatus(parseInt(_input.value), _minValue, _maxValue);
+    }
+  };
+}
+var _default = exports.default = InputContainer;
+},{"./Status":"models/Status.js"}],"scripts/index.js":[function(require,module,exports) {
 "use strict";
 
 var _moment = _interopRequireDefault(require("moment"));
 var _Status = _interopRequireDefault(require("../models/Status"));
+var _InputContainer = _interopRequireDefault(require("../models/InputContainer"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 var now = (0, _moment.default)();
 var form = document.getElementById('age-calculator');
@@ -5890,14 +5930,15 @@ var nodeArray = Array.from(arayImputContainers);
 var status = (0, _Status.default)();
 var formDate = {};
 var formElements = {};
+var inputContainers = {};
 nodeArray.forEach(function (container) {
   var message = container.querySelector('.message-invalid-value');
-  var input = container.querySelector('input');
+  var input = container.querySelector('.input');
+  var nameInput = input.getAttribute('name');
   var value = parseInt(input.value);
   var maxValue = parseInt(input.getAttribute('max'));
   var minValue = parseInt(input.getAttribute('min'));
   var valueStatus = status.valueStatus(value, minValue, maxValue);
-  var nameInput = input.getAttribute('name');
   formElements[nameInput] = {
     container: container,
     input: input,
@@ -5908,46 +5949,35 @@ nodeArray.forEach(function (container) {
     message: message,
     valueStatus: valueStatus
   };
+  inputContainers[nameInput] = (0, _InputContainer.default)(container, input, nameInput, minValue, maxValue, message);
 });
 form.addEventListener('input', function () {
-  // nodeArray.forEach((inputContainer) => {
-  //     const message = inputContainer.querySelector('.message-invalid-value');
-  //     const input = inputContainer.querySelector('input');
-  //     const value = parseInt(input.value);
-  //     const maxValue = parseInt(input.getAttribute('max'));
-  //     const minValue = parseInt(input.getAttribute('min'));
-  //     const valueStatus = status.valueStatus(value, minValue, maxValue);
-  //     const nameInput = input.getAttribute('name');
+  // for (const property in formElements) {
+  //     formElements[property].value = parseInt(formElements[property].input.value);
+  //     formElements[property].valueStatus =
+  //         status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
 
-  //     if (valueStatus === status.INVALID_VALUE) {
-  //         inputContainer.classList.add('invalid-value');
-  //         message.textContent = `Must be a valid ${nameInput}`;
+  //     if (formElements[property].valueStatus === status.INVALID_VALUE) {
+  //         formElements[property].container.classList.add('invalid-value');
+  //         formElements[property].message.textContent = `Must be a valid ${formElements[property].nameInput}`;
   //     } else {
-  //         inputContainer.classList.remove('invalid-value');
+  //         formElements[property].container.classList.remove('invalid-value');
   //     }
+  // }
 
-  //     formElements[[nameInput]] = (
-  //         {
-  //             container: inputContainer,
-  //             value: value,
-  //             valueStatus: valueStatus,
-  //             message: message
-  //         }
-  //     )
-  // });
-
-  for (var property in formElements) {
-    formElements[property].value = parseInt(formElements[property].input.value);
-    formElements[property].valueStatus = status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
-    if (formElements[property].valueStatus === status.INVALID_VALUE) {
-      formElements[property].container.classList.add('invalid-value');
-      formElements[property].message.textContent = "Must be a valid ".concat(formElements[property].nameInput);
+  for (var property in inputContainers) {
+    if (inputContainers[property].valueStatus() === status.INVALID_VALUE) {
+      inputContainers[property].container().classList.add('invalid-value');
+      inputContainers[property].message().textContent = "Must be a valid ".concat(inputContainers[property].nameInput());
     } else {
-      formElements[property].container.classList.remove('invalid-value');
+      inputContainers[property].container().classList.remove('invalid-value');
     }
   }
-  formDate.date = (0, _moment.default)("".concat(formElements.day.value, "/").concat(formElements.month.value, "/").concat(formElements.year.value), 'D/M/YYYY');
-  formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+
+  // formDate.date = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
+  // formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+  formDate.date = (0, _moment.default)("".concat(inputContainers.day.value(), "/").concat(inputContainers.month.value(), "/").concat(inputContainers.year.value()), 'D/M/YYYY');
+  formDate.allStatus = status.allValueIsValid([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
   formDate.dateStatus = status.dateStatus(formDate.date);
   if (formDate.allStatus === status.ALL_IS_VALID) {
     if (formDate.dateStatus === status.INVALID_DATE) {
@@ -5966,56 +5996,33 @@ form.addEventListener('input', function () {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   if (formDate.allStatus === status.ALL_IS_VALID && formDate.dateStatus === status.PAST_DATE) {
-    var toNowYears = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value, "-").concat(formElements.year.value), 'D-M-YYYY'), 'years');
-    var toNowMonths = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value, "-").concat(formElements.year.value + toNowYears), 'D-M-YYYY'), 'months');
-    var toNowDays = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value + toNowMonths, "-").concat(formElements.year.value + toNowYears), 'D-M-YYYY'), 'days');
+    // const toNowYears = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value}`, 'D-M-YYYY'), 'years');
+    // const toNowMonths = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'months');
+    // const toNowDays = now.diff(moment(`${formElements.day.value}-${formElements.month.value + toNowMonths}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'days');
+
+    var toNowYears = now.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value()), 'D-M-YYYY'), 'years');
+    var toNowMonths = now.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'months');
+    var toNowDays = now.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value() + toNowMonths, "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'days');
     outputDay.textContent = "".concat(toNowDays);
     outputMonth.textContent = "".concat(toNowMonths);
     outputYear.textContent = "".concat(toNowYears);
   } else {
-    for (var property in formElements) {
-      if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
-        formElements[property].container.classList.add('invalid-value');
-        formElements[property].message.textContent = 'This field is required';
+    // for (const property in formElements) {
+    //     if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
+    //         formElements[property].container.classList.add('invalid-value')
+    //         formElements[property].message.textContent = 'This field is required';
+    //     }
+    // }
+
+    for (var property in inputContainers) {
+      if (inputContainers[property].valueStatus() !== status.VALID_VALUE && inputContainers[property].valueStatus() === status.NO_VALUE) {
+        inputContainers[property].container().classList.add('invalid-value');
+        inputContainers[property].message().textContent = 'This field is required';
       }
     }
   }
 });
-
-// form.addEventListener('submit', (event) => {
-//     event.preventDefault();
-
-//     const formValues = {};
-//     arayImputContainers.forEach((container) => {
-//         const input = container.querySelector('input');
-//         const messageInput = container.querySelector('.message-invalid-value');
-//         const value = parseInt(input.value);
-//         const maxValue = parseInt(input.getAttribute('max'));
-//         const minValue = parseInt(input.getAttribute('min'));
-
-//         if (input.value === '') {
-//             container.classList.add('invalid-value');
-//             messageInput.textContent = 'This field is required';
-//         } else if (value <= maxValue && value >= minValue) {
-//             container.classList.remove('invalid-value');
-//             const chave = input.getAttribute('name');
-//             formValues[[chave]] = value;
-//         }
-//     })
-
-//     if (formValues.day && formValues.month && formValues.year &&
-//         (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isValid()) &&
-//         formValues.year && (moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY').isBefore(now))) {
-//         const toNowYears = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year}`, 'D-M-YYYY'), 'years');
-//         const toNowMonths = now.diff(moment(`${formValues.day}-${formValues.month}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'months');
-//         const toNowDays = now.diff(moment(`${formValues.day}-${formValues.month + toNowMonths}-${formValues.year + toNowYears}`, 'D-M-YYYY'), 'days');
-
-//         outputDay.textContent = `${toNowDays}`
-//         outputMonth.textContent = `${toNowMonths}`
-//         outputYear.textContent = `${toNowYears}`
-//     }
-// });
-},{"moment":"node_modules/moment/moment.js","../models/Status":"models/Status.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"moment":"node_modules/moment/moment.js","../models/Status":"models/Status.js","../models/InputContainer":"models/InputContainer.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
