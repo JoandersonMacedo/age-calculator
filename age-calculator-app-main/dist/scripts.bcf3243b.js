@@ -5809,20 +5809,13 @@ var global = arguments[3];
 
 })));
 
-},{}],"scripts/index.js":[function(require,module,exports) {
+},{}],"models/Status.js":[function(require,module,exports) {
 "use strict";
 
-var _moment = _interopRequireDefault(require("moment"));
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-var now = (0, _moment.default)();
-var form = document.getElementById('age-calculator');
-var inputs = form.querySelector('#inputs');
-var messageInputs = inputs.querySelector('.message-invalid-date');
-var arayImputContainers = inputs.querySelectorAll('.input-container');
-var outputDay = document.getElementById('output-day');
-var outputMonth = document.getElementById('output-month');
-var outputYear = document.getElementById('output-year');
-var nodeArray = Array.from(arayImputContainers);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 function Status() {
   var NO_VALUE = 'NO_VALUE';
   var INVALID_VALUE = 'INVALID_VALUE';
@@ -5843,7 +5836,7 @@ function Status() {
     }
   }
   function allValueIsValid(statusArray) {
-    for (var i = 0; i <= statusArray.length; i++) {
+    for (var i in statusArray) {
       if (statusArray[i] !== VALID_VALUE) {
         return HAVE_INVALID;
       }
@@ -5864,52 +5857,103 @@ function Status() {
     }
   }
   return {
-    NO_VALUE: NO_VALUE,
-    INVALID_VALUE: INVALID_VALUE,
     VALID_VALUE: VALID_VALUE,
+    INVALID_VALUE: INVALID_VALUE,
+    NO_VALUE: NO_VALUE,
+    PAST_DATE: PAST_DATE,
+    PRESENT_DATE: PRESENT_DATE,
+    FUTURE_DATE: FUTURE_DATE,
+    INVALID_DATE: INVALID_DATE,
     ALL_IS_VALID: ALL_IS_VALID,
     HAVE_INVALID: HAVE_INVALID,
-    INVALID_DATE: INVALID_DATE,
-    PAST_DATE: PAST_DATE,
-    FUTURE_DATE: FUTURE_DATE,
-    PRESENT_DATE: PRESENT_DATE,
     valueStatus: valueStatus,
     allValueIsValid: allValueIsValid,
     dateStatus: dateStatus
   };
 }
+var _default = exports.default = Status;
+},{}],"scripts/index.js":[function(require,module,exports) {
+"use strict";
+
+var _moment = _interopRequireDefault(require("moment"));
+var _Status = _interopRequireDefault(require("../models/Status"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+var now = (0, _moment.default)();
+var form = document.getElementById('age-calculator');
+var inputs = form.querySelector('#inputs');
+var messageInputs = inputs.querySelector('.message-invalid-date');
+var arayImputContainers = inputs.querySelectorAll('.input-container');
+var outputDay = document.getElementById('output-day');
+var outputMonth = document.getElementById('output-month');
+var outputYear = document.getElementById('output-year');
+var nodeArray = Array.from(arayImputContainers);
+var status = (0, _Status.default)();
 var formDate = {};
 var formElements = {};
+nodeArray.forEach(function (container) {
+  var message = container.querySelector('.message-invalid-value');
+  var input = container.querySelector('input');
+  var value = parseInt(input.value);
+  var maxValue = parseInt(input.getAttribute('max'));
+  var minValue = parseInt(input.getAttribute('min'));
+  var valueStatus = status.valueStatus(value, minValue, maxValue);
+  var nameInput = input.getAttribute('name');
+  formElements[nameInput] = {
+    container: container,
+    input: input,
+    nameInput: nameInput,
+    minValue: minValue,
+    maxValue: maxValue,
+    value: value,
+    message: message,
+    valueStatus: valueStatus
+  };
+});
 form.addEventListener('input', function () {
-  nodeArray.forEach(function (inputContainer) {
-    var message = inputContainer.querySelector('.message-invalid-value');
-    var input = inputContainer.querySelector('input');
-    var value = parseInt(input.value);
-    var maxValue = parseInt(input.getAttribute('max'));
-    var minValue = parseInt(input.getAttribute('min'));
-    var valueStatus = Status().valueStatus(value, minValue, maxValue);
-    var nameInput = input.getAttribute('name');
-    if (valueStatus === Status().INVALID_VALUE) {
-      inputContainer.classList.add('invalid-value');
-      message.textContent = "Must be a valid ".concat(nameInput);
+  // nodeArray.forEach((inputContainer) => {
+  //     const message = inputContainer.querySelector('.message-invalid-value');
+  //     const input = inputContainer.querySelector('input');
+  //     const value = parseInt(input.value);
+  //     const maxValue = parseInt(input.getAttribute('max'));
+  //     const minValue = parseInt(input.getAttribute('min'));
+  //     const valueStatus = status.valueStatus(value, minValue, maxValue);
+  //     const nameInput = input.getAttribute('name');
+
+  //     if (valueStatus === status.INVALID_VALUE) {
+  //         inputContainer.classList.add('invalid-value');
+  //         message.textContent = `Must be a valid ${nameInput}`;
+  //     } else {
+  //         inputContainer.classList.remove('invalid-value');
+  //     }
+
+  //     formElements[[nameInput]] = (
+  //         {
+  //             container: inputContainer,
+  //             value: value,
+  //             valueStatus: valueStatus,
+  //             message: message
+  //         }
+  //     )
+  // });
+
+  for (var property in formElements) {
+    formElements[property].value = parseInt(formElements[property].input.value);
+    formElements[property].valueStatus = status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
+    if (formElements[property].valueStatus === status.INVALID_VALUE) {
+      formElements[property].container.classList.add('invalid-value');
+      formElements[property].message.textContent = "Must be a valid ".concat(formElements[property].nameInput);
     } else {
-      inputContainer.classList.remove('invalid-value');
+      formElements[property].container.classList.remove('invalid-value');
     }
-    formElements[[nameInput]] = {
-      container: inputContainer,
-      value: value,
-      valueStatus: valueStatus,
-      message: message
-    };
-  });
+  }
   formDate.date = (0, _moment.default)("".concat(formElements.day.value, "/").concat(formElements.month.value, "/").concat(formElements.year.value), 'D/M/YYYY');
-  formDate.allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
-  formDate.dateStatus = Status().dateStatus(formDate.date);
-  if (formDate.allStatus === Status().ALL_IS_VALID) {
-    if (formDate.dateStatus === Status().INVALID_DATE) {
+  formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+  formDate.dateStatus = status.dateStatus(formDate.date);
+  if (formDate.allStatus === status.ALL_IS_VALID) {
+    if (formDate.dateStatus === status.INVALID_DATE) {
       inputs.classList.add('invalid-date');
       messageInputs.textContent = 'Must be a valide date';
-    } else if (formDate.dateStatus === (Status().FUTURE_DATE || Status().PRESENT_DATE)) {
+    } else if (formDate.dateStatus === (status.FUTURE_DATE || status.PRESENT_DATE)) {
       inputs.classList.add('invalid-date');
       messageInputs.textContent = 'Must be in the past';
     } else {
@@ -5921,7 +5965,7 @@ form.addEventListener('input', function () {
 });
 form.addEventListener('submit', function (event) {
   event.preventDefault();
-  if (formDate.allStatus === Status.ALL_IS_VALID && formDate.dateStatus === Status.PAST_DATE) {
+  if (formDate.allStatus === status.ALL_IS_VALID && formDate.dateStatus === status.PAST_DATE) {
     var toNowYears = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value, "-").concat(formElements.year.value), 'D-M-YYYY'), 'years');
     var toNowMonths = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value, "-").concat(formElements.year.value + toNowYears), 'D-M-YYYY'), 'months');
     var toNowDays = now.diff((0, _moment.default)("".concat(formElements.day.value, "-").concat(formElements.month.value + toNowMonths, "-").concat(formElements.year.value + toNowYears), 'D-M-YYYY'), 'days');
@@ -5929,14 +5973,12 @@ form.addEventListener('submit', function (event) {
     outputMonth.textContent = "".concat(toNowMonths);
     outputYear.textContent = "".concat(toNowYears);
   } else {
-    nodeArray.forEach(function (inputContainer) {
-      var nameInput = inputContainer.querySelector('input').getAttribute('name');
-      var formElement = formElements[[nameInput]];
-      if (formElement.valueStatus !== Status().VALID_VALUE && formElement.valueStatus === Status().NO_VALUE) {
-        formElement.container.classList.add('invalid-value');
-        formElements.message.textContent = 'This field is required';
+    for (var property in formElements) {
+      if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
+        formElements[property].container.classList.add('invalid-value');
+        formElements[property].message.textContent = 'This field is required';
       }
-    });
+    }
   }
 });
 
@@ -5973,7 +6015,7 @@ form.addEventListener('submit', function (event) {
 //         outputYear.textContent = `${toNowYears}`
 //     }
 // });
-},{"moment":"node_modules/moment/moment.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"moment":"node_modules/moment/moment.js","../models/Status":"models/Status.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -5998,7 +6040,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50934" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52349" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

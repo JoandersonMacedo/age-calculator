@@ -1,4 +1,5 @@
 import moment from "moment";
+import Status from "../models/Status";
 
 const now = moment();
 
@@ -12,105 +13,82 @@ const outputYear = document.getElementById('output-year');
 
 const nodeArray = Array.from(arayImputContainers);
 
-function Status() {
-    const NO_VALUE = 'NO_VALUE';
-    const INVALID_VALUE = 'INVALID_VALUE';
-    const VALID_VALUE = 'VALID_VALUE';
-    const ALL_IS_VALID = 'ALL_IS_VALID';
-    const HAVE_INVALID = 'HAVE_INVALID';
-    const INVALID_DATE = 'INVALID_DATE';
-    const FUTURE_DATE = 'FUTURE_DATE'
-    const PAST_DATE = 'PAST_DATE';
-    const PRESENT_DATE = 'PRESENT_DATE';
-
-    function valueStatus(value, minValue, maxValue) {
-        if (minValue <= value && value <= maxValue) {
-            return VALID_VALUE;
-        } else if (value < minValue || maxValue < value) {
-            return INVALID_VALUE
-        } else {
-            return NO_VALUE;
-        }
-    }
-
-    function allValueIsValid(statusArray) {
-        for (let i = 0; i <= statusArray.length; i++) {
-            if (statusArray[i] !== VALID_VALUE) {
-                return HAVE_INVALID;
-            }
-        }
-        return ALL_IS_VALID;
-    }
-
-    function dateStatus(date) {
-        if (date.isValid()) {
-            if (date.isBefore()) {
-                return PAST_DATE;
-            } else if (date.isAfter()) {
-                return FUTURE_DATE;
-            } else {
-                return PRESENT_DATE;
-            }
-        } else {
-            return INVALID_DATE;
-        }
-    }
-
-    return {
-        NO_VALUE,
-        INVALID_VALUE,
-        VALID_VALUE,
-        ALL_IS_VALID,
-        HAVE_INVALID,
-        INVALID_DATE,
-        PAST_DATE,
-        FUTURE_DATE,
-        PRESENT_DATE,
-        valueStatus,
-        allValueIsValid,
-        dateStatus,
-    }
-}
-
-
+const status = Status();
 const formDate = {};
 const formElements = {};
-form.addEventListener('input', () => {
-    nodeArray.forEach((inputContainer) => {
-        const message = inputContainer.querySelector('.message-invalid-value');
-        const input = inputContainer.querySelector('input');
-        const value = parseInt(input.value);
-        const maxValue = parseInt(input.getAttribute('max'));
-        const minValue = parseInt(input.getAttribute('min'));
-        const valueStatus = Status().valueStatus(value, minValue, maxValue);
-        const nameInput = input.getAttribute('name');
 
-        if (valueStatus === Status().INVALID_VALUE) {
-            inputContainer.classList.add('invalid-value');
-            message.textContent = `Must be a valid ${nameInput}`;
-        } else {
-            inputContainer.classList.remove('invalid-value');
+nodeArray.forEach((container) => {
+    const message = container.querySelector('.message-invalid-value');
+    const input = container.querySelector('input');
+    const value = parseInt(input.value);
+    const maxValue = parseInt(input.getAttribute('max'));
+    const minValue = parseInt(input.getAttribute('min'));
+    const valueStatus = status.valueStatus(value, minValue, maxValue);
+    const nameInput = input.getAttribute('name');
+
+    formElements[nameInput] = (
+        {
+            container: container,
+            input: input,
+            nameInput: nameInput,
+            minValue: minValue,
+            maxValue: maxValue,
+            value: value,
+            message: message,
+            valueStatus: valueStatus,
         }
+    )
+});
 
-        formElements[[nameInput]] = (
-            {
-                container: inputContainer,
-                value: value,
-                valueStatus: valueStatus,
-                message: message
-            }
-        )
-    });
+form.addEventListener('input', () => {
+    // nodeArray.forEach((inputContainer) => {
+    //     const message = inputContainer.querySelector('.message-invalid-value');
+    //     const input = inputContainer.querySelector('input');
+    //     const value = parseInt(input.value);
+    //     const maxValue = parseInt(input.getAttribute('max'));
+    //     const minValue = parseInt(input.getAttribute('min'));
+    //     const valueStatus = status.valueStatus(value, minValue, maxValue);
+    //     const nameInput = input.getAttribute('name');
+
+    //     if (valueStatus === status.INVALID_VALUE) {
+    //         inputContainer.classList.add('invalid-value');
+    //         message.textContent = `Must be a valid ${nameInput}`;
+    //     } else {
+    //         inputContainer.classList.remove('invalid-value');
+    //     }
+
+    //     formElements[[nameInput]] = (
+    //         {
+    //             container: inputContainer,
+    //             value: value,
+    //             valueStatus: valueStatus,
+    //             message: message
+    //         }
+    //     )
+    // });
+
+    for (const property in formElements) {
+        formElements[property].value = parseInt(formElements[property].input.value);
+        formElements[property].valueStatus =
+            status.valueStatus(formElements[property].value, formElements[property].minValue, formElements[property].maxValue);
+
+        if (formElements[property].valueStatus === status.INVALID_VALUE) {
+            formElements[property].container.classList.add('invalid-value');
+            formElements[property].message.textContent = `Must be a valid ${formElements[property].nameInput}`;
+        } else {
+            formElements[property].container.classList.remove('invalid-value');
+        }
+    }
 
     formDate.date = moment(`${formElements.day.value}/${formElements.month.value}/${formElements.year.value}`, 'D/M/YYYY');
-    formDate.allStatus = Status().allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
-    formDate.dateStatus = Status().dateStatus(formDate.date);
+    formDate.allStatus = status.allValueIsValid([formElements.day.valueStatus, formElements.month.valueStatus, formElements.year.valueStatus]);
+    formDate.dateStatus = status.dateStatus(formDate.date);
 
-    if (formDate.allStatus === Status().ALL_IS_VALID) {
-        if (formDate.dateStatus === Status().INVALID_DATE) {
+    if (formDate.allStatus === status.ALL_IS_VALID) {
+        if (formDate.dateStatus === status.INVALID_DATE) {
             inputs.classList.add('invalid-date');
             messageInputs.textContent = 'Must be a valide date';
-        } else if (formDate.dateStatus === (Status().FUTURE_DATE || Status().PRESENT_DATE)) {
+        } else if (formDate.dateStatus === (status.FUTURE_DATE || status.PRESENT_DATE)) {
             inputs.classList.add('invalid-date');
             messageInputs.textContent = 'Must be in the past';
         } else {
@@ -124,7 +102,7 @@ form.addEventListener('input', () => {
 form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    if (formDate.allStatus === Status.ALL_IS_VALID && formDate.dateStatus === Status.PAST_DATE) {
+    if (formDate.allStatus === status.ALL_IS_VALID && formDate.dateStatus === status.PAST_DATE) {
         const toNowYears = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value}`, 'D-M-YYYY'), 'years');
         const toNowMonths = now.diff(moment(`${formElements.day.value}-${formElements.month.value}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'months');
         const toNowDays = now.diff(moment(`${formElements.day.value}-${formElements.month.value + toNowMonths}-${formElements.year.value + toNowYears}`, 'D-M-YYYY'), 'days');
@@ -133,15 +111,12 @@ form.addEventListener('submit', (event) => {
         outputMonth.textContent = `${toNowMonths}`
         outputYear.textContent = `${toNowYears}`
     } else {
-        nodeArray.forEach((inputContainer) => {
-            const nameInput = inputContainer.querySelector('input').getAttribute('name');
-            const formElement = formElements[[nameInput]];
-
-            if (formElement.valueStatus !== Status().VALID_VALUE && formElement.valueStatus === Status().NO_VALUE) {
-                formElement.container.classList.add('invalid-value')
-                formElements.message.textContent = 'This field is required';
+        for (const property in formElements) {
+            if (formElements[property].valueStatus !== status.VALID_VALUE && formElements[property].valueStatus === status.NO_VALUE) {
+                formElements[property].container.classList.add('invalid-value')
+                formElements[property].message.textContent = 'This field is required';
             }
-        })
+        }
     }
 });
 
