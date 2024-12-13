@@ -1,6 +1,7 @@
 import moment from "moment";
 import status, { allValueIsValid, dateStatus } from "../models/Status";
 import InputContainer from "../models/InputContainer";
+import Age from "../models/Age";
 
 const today = moment().startOf('day');
 console.log(today)
@@ -62,13 +63,15 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     if (formDate.allStatus === status.ALL_IS_VALID && formDate.dateStatus === status.PAST_DATE) {
-        const toNowYears = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value()}`, 'D-M-YYYY'), 'years');
-        const toNowMonths = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'months');
-        const toNowDays = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value() + toNowMonths}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'days');
+        // const toNowYears = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value()}`, 'D-M-YYYY'), 'years');
+        // const toNowMonths = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'months');
+        // const age. = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value() + toNowMonths}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'days');
         
-        outputDay.textContent = `${toNowDays}`
-        outputMonth.textContent = `${toNowMonths}`
-        outputYear.textContent = `${toNowYears}`
+        const age = Age(inputContainers.day.value(), inputContainers.month.value(), inputContainers.year.value());
+
+        outputDay.textContent = `${age.toNowDays}`
+        outputMonth.textContent = `${age.toNowMonths}`
+        outputYear.textContent = `${age.toNowYears}`
     } else {
         for (const property in inputContainers) {
             if (inputContainers[property].valueStatus() !== status.VALID_VALUE && inputContainers[property].valueStatus() === status.NO_VALUE) {

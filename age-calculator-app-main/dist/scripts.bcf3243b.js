@@ -5909,12 +5909,34 @@ function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _m
   };
 }
 var _default = exports.default = InputContainer;
-},{"./Status":"models/Status.js"}],"scripts/index.js":[function(require,module,exports) {
+},{"./Status":"models/Status.js"}],"models/Age.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _moment = _interopRequireDefault(require("moment"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function Age(day, month, year) {
+  var today = (0, _moment.default)().startOf('day');
+  var toNowYears = today.diff((0, _moment.default)("".concat(day, "-").concat(month, "-").concat(year), 'D-M-YYYY'), 'years');
+  var toNowMonths = today.diff((0, _moment.default)("".concat(day, "-").concat(month, "-").concat(year + toNowYears), 'D-M-YYYY'), 'months');
+  var toNowDays = today.diff((0, _moment.default)("".concat(day, "-").concat(month + toNowMonths, "-").concat(year + toNowYears), 'D-M-YYYY'), 'days');
+  return {
+    toNowDays: toNowDays,
+    toNowMonths: toNowMonths,
+    toNowYears: toNowYears
+  };
+}
+var _default = exports.default = Age;
+},{"moment":"node_modules/moment/moment.js"}],"scripts/index.js":[function(require,module,exports) {
 "use strict";
 
 var _moment = _interopRequireDefault(require("moment"));
 var _Status = _interopRequireWildcard(require("../models/Status"));
 var _InputContainer = _interopRequireDefault(require("../models/InputContainer"));
+var _Age = _interopRequireDefault(require("../models/Age"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -5967,12 +5989,14 @@ form.addEventListener('input', function () {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   if (formDate.allStatus === _Status.default.ALL_IS_VALID && formDate.dateStatus === _Status.default.PAST_DATE) {
-    var toNowYears = today.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value()), 'D-M-YYYY'), 'years');
-    var toNowMonths = today.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value(), "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'months');
-    var toNowDays = today.diff((0, _moment.default)("".concat(inputContainers.day.value(), "-").concat(inputContainers.month.value() + toNowMonths, "-").concat(inputContainers.year.value() + toNowYears), 'D-M-YYYY'), 'days');
-    outputDay.textContent = "".concat(toNowDays);
-    outputMonth.textContent = "".concat(toNowMonths);
-    outputYear.textContent = "".concat(toNowYears);
+    // const toNowYears = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value()}`, 'D-M-YYYY'), 'years');
+    // const toNowMonths = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'months');
+    // const age. = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value() + toNowMonths}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'days');
+
+    var age = (0, _Age.default)(inputContainers.day.value(), inputContainers.month.value(), inputContainers.year.value());
+    outputDay.textContent = "".concat(age.toNowDays);
+    outputMonth.textContent = "".concat(age.toNowMonths);
+    outputYear.textContent = "".concat(age.toNowYears);
   } else {
     for (var property in inputContainers) {
       if (inputContainers[property].valueStatus() !== _Status.default.VALID_VALUE && inputContainers[property].valueStatus() === _Status.default.NO_VALUE) {
@@ -5982,7 +6006,7 @@ form.addEventListener('submit', function (event) {
     }
   }
 });
-},{"moment":"node_modules/moment/moment.js","../models/Status":"models/Status.js","../models/InputContainer":"models/InputContainer.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"moment":"node_modules/moment/moment.js","../models/Status":"models/Status.js","../models/InputContainer":"models/InputContainer.js","../models/Age":"models/Age.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -6007,7 +6031,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52349" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61846" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
