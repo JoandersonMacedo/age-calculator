@@ -5989,10 +5989,6 @@ form.addEventListener('input', function () {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   if (formDate.allStatus === _Status.default.ALL_IS_VALID && formDate.dateStatus === _Status.default.PAST_DATE) {
-    // const toNowYears = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value()}`, 'D-M-YYYY'), 'years');
-    // const toNowMonths = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value()}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'months');
-    // const age. = today.diff(moment(`${inputContainers.day.value()}-${inputContainers.month.value() + toNowMonths}-${inputContainers.year.value() + toNowYears}`, 'D-M-YYYY'), 'days');
-
     var age = (0, _Age.default)(inputContainers.day.value(), inputContainers.month.value(), inputContainers.year.value());
     outputDay.textContent = "".concat(age.toNowDays);
     outputMonth.textContent = "".concat(age.toNowMonths);
