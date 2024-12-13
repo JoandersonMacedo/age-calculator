@@ -3,9 +3,6 @@ import status, { allValueIsValid, dateStatus } from "../models/Status";
 import InputContainer from "../models/InputContainer";
 import Age from "../models/Age";
 
-const today = moment().startOf('day');
-console.log(today)
-
 const form = document.getElementById('age-calculator');
 const inputs = form.querySelector('#inputs');
 const messageInputs = inputs.querySelector('.message-invalid-date');
