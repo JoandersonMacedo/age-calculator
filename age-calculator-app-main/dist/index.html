@@ -19,17 +19,17 @@
                     <div>
                         <div class="input-container">
                             <label class="identifier">Day</label>
-                            <input class="input" id="day" name="day" type="number" min="1" max="31" placeholder="DD">
+                            <input class="input" id="day" name="day" type="number" min="1" max="31" placeholder="DD" validationtype="min-max">
                             <label class="message-invalid-value" for="day">Must be a valid day</label>
                         </div>
                         <div class="input-container">
                             <label class="identifier">Month</label>
-                            <input class="input" id="month" name="month" type="number" min="1" max="12" placeholder="MM">
+                            <input class="input" id="month" name="month" type="number" min="1" max="12" placeholder="MM" validationtype="min-max">
                             <label class="message-invalid-value" for="month">Must be a valid month</label>
                         </div>
                         <div class="input-container">
                             <label class="identifier">Year</label>
-                            <input class="input" id="year" name="year" type="number" min="-9999" max="9999" placeholder="YYYY">
+                            <input class="input" id="year" name="year" type="number" minlength="4" placeholder="YYYY" validationtype="min-length">
                             <label class="message-invalid-value" for="year">Must be a valid year</label>
                         </div>
                     </div>

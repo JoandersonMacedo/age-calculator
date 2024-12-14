@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/moment/moment.js":[function(require,module,exports) {
+})({"../node_modules/moment/moment.js":[function(require,module,exports) {
 var define;
 var global = arguments[3];
 //! moment.js
@@ -5830,14 +5830,39 @@ var INVALID_DATE = 'INVALID_DATE';
 var FUTURE_DATE = 'FUTURE_DATE';
 var PAST_DATE = 'PAST_DATE';
 var PRESENT_DATE = 'PRESENT_DATE';
-function valueStatus(value, minValue, maxValue) {
-  if (minValue <= value && value <= maxValue) {
-    return VALID_VALUE;
-  } else if (value < minValue || maxValue < value) {
-    return INVALID_VALUE;
-  } else {
-    return NO_VALUE;
-  }
+var status = {
+  VALID_VALUE: VALID_VALUE,
+  INVALID_VALUE: INVALID_VALUE,
+  NO_VALUE: NO_VALUE,
+  PAST_DATE: PAST_DATE,
+  PRESENT_DATE: PRESENT_DATE,
+  FUTURE_DATE: FUTURE_DATE,
+  INVALID_DATE: INVALID_DATE,
+  ALL_IS_VALID: ALL_IS_VALID,
+  HAVE_INVALID: HAVE_INVALID
+};
+var _default = exports.default = status;
+function valueStatus() {
+  return {
+    minMax: function minMax(value, minValue, maxValue) {
+      if (minValue <= value && value <= maxValue) {
+        return VALID_VALUE;
+      } else if (value < minValue || maxValue < value) {
+        return INVALID_VALUE;
+      } else {
+        return NO_VALUE;
+      }
+    },
+    minLength: function minLength(value, minlenght) {
+      if (value.length === 0) {
+        return NO_VALUE;
+      } else if (value.length >= minlenght) {
+        return VALID_VALUE;
+      } else {
+        return INVALID_VALUE;
+      }
+    }
+  };
 }
 function allValueIsValid(statusArray) {
   for (var i in statusArray) {
@@ -5860,27 +5885,34 @@ function dateStatus(date) {
     return INVALID_DATE;
   }
 }
-var status = {
-  VALID_VALUE: VALID_VALUE,
-  INVALID_VALUE: INVALID_VALUE,
-  NO_VALUE: NO_VALUE,
-  PAST_DATE: PAST_DATE,
-  PRESENT_DATE: PRESENT_DATE,
-  FUTURE_DATE: FUTURE_DATE,
-  INVALID_DATE: INVALID_DATE,
-  ALL_IS_VALID: ALL_IS_VALID,
-  HAVE_INVALID: HAVE_INVALID
-};
-var _default = exports.default = status;
-},{"moment":"node_modules/moment/moment.js"}],"models/InputContainer.js":[function(require,module,exports) {
+},{"moment":"../node_modules/moment/moment.js"}],"models/ValidationTypes.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _Status = require("./Status");
-function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _message) {
+var MIN_MAX = 'min-max';
+var MIN_LENGTH = 'min-length';
+var validationTypes = {
+  MIN_LENGTH: MIN_LENGTH,
+  MIN_MAX: MIN_MAX
+};
+var _default = exports.default = validationTypes;
+},{}],"models/InputContainer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _Status = _interopRequireWildcard(require("./Status"));
+var _ValidationTypes = _interopRequireDefault(require("./ValidationTypes"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+var vStatus = (0, _Status.valueStatus)();
+function InputContainer(_container, _input, _nameInput, _message, validationType) {
   return {
     container: function container() {
       return _container;
@@ -5891,12 +5923,6 @@ function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _m
     nameInput: function nameInput() {
       return _nameInput;
     },
-    minValue: function minValue() {
-      return _minValue;
-    },
-    maxValue: function maxValue() {
-      return _maxValue;
-    },
     message: function message() {
       return _message;
     },
@@ -5904,12 +5930,72 @@ function InputContainer(_container, _input, _nameInput, _minValue, _maxValue, _m
       return parseInt(_input.value);
     },
     valueStatus: function valueStatus() {
-      return (0, _Status.valueStatus)(parseInt(_input.value), _minValue, _maxValue);
+      switch (validationType) {
+        case _ValidationTypes.default.MIN_MAX:
+          return vStatus.minMax(parseInt(_input.value), parseInt(_input.getAttribute('min')), parseInt(_input.getAttribute('max')));
+        case _ValidationTypes.default.MIN_LENGTH:
+          return vStatus.minLength(_input.value, _input.getAttribute('minlength'));
+      }
     }
   };
 }
+
+// valueStatus() {
+//     return status.minLength(input.value, input.getAttribute('minlength'));
+// }
+//valueStatus() {
+//    return status.minMax(parseInt(input.value), parseInt(input.getAttribute('max'), parseInt(input.getAttribute('min')));
+//}
+
+// function InputContainer() {
+//     const status = valueStatus();
+
+//     return {
+//         minMax(
+//             container,
+//             input,
+//             nameInput,
+//             message,
+//             minValue,
+//             maxValue,
+//         ) {
+//             return {
+//                 container() { return container },
+//                 input() { return input },
+//                 nameInput() { return nameInput },
+//                 message() { return message },
+//                 value() {
+//                     return parseInt(input.value);
+//                 },
+//                 valueStatus() {
+//                     return status.minMax(parseInt(input.value), minValue, maxValue);
+//                 }
+//             }
+//         },
+//         minLength(
+//             container,
+//             input,
+//             nameInput,
+//             message,
+//             minlenght
+//         ) {
+//             return {
+//                 container() { return container },
+//                 input() { return input },
+//                 nameInput() { return nameInput },
+//                 message() { return message },
+//                 value() {
+//                     return parseInt(input.value);
+//                 },
+//                 valueStatus() {
+//                     return status.minLength(input.value, minlenght);
+//                 }
+//             }
+//         }
+//     }
+// }
 var _default = exports.default = InputContainer;
-},{"./Status":"models/Status.js"}],"models/Age.js":[function(require,module,exports) {
+},{"./Status":"models/Status.js","./ValidationTypes":"models/ValidationTypes.js"}],"models/Age.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5930,7 +6016,7 @@ function Age(day, month, year) {
   };
 }
 var _default = exports.default = Age;
-},{"moment":"node_modules/moment/moment.js"}],"scripts/index.js":[function(require,module,exports) {
+},{"moment":"../node_modules/moment/moment.js"}],"scripts/index.js":[function(require,module,exports) {
 "use strict";
 
 var _moment = _interopRequireDefault(require("moment"));
@@ -5953,20 +6039,22 @@ var formDate = {};
 nodeArray.forEach(function (container) {
   var input = container.querySelector('.input');
   var nameInput = input.getAttribute('name');
-  var maxValue = parseInt(input.getAttribute('max'));
-  var minValue = parseInt(input.getAttribute('min'));
+  var validationType = input.getAttribute('validationtype');
   var message = container.querySelector('.message-invalid-value');
-  inputContainers[nameInput] = (0, _InputContainer.default)(container, input, nameInput, minValue, maxValue, message);
-});
-form.addEventListener('input', function () {
-  for (var property in inputContainers) {
-    if (inputContainers[property].valueStatus() === _Status.default.INVALID_VALUE) {
-      inputContainers[property].container().classList.add('invalid-value');
-      inputContainers[property].message().textContent = "Must be a valid ".concat(inputContainers[property].nameInput());
-    } else {
-      inputContainers[property].container().classList.remove('invalid-value');
+  inputContainers[nameInput] = (0, _InputContainer.default)(container, input, nameInput, message, validationType);
+  input.addEventListener('change', function () {
+    if (inputContainers[nameInput].valueStatus() === _Status.default.INVALID_VALUE) {
+      inputContainers[nameInput].container().classList.add('invalid-value');
+      inputContainers[nameInput].message().textContent = "Must be a valid ".concat(inputContainers[nameInput].nameInput());
     }
-  }
+  });
+  input.addEventListener('input', function () {
+    if (inputContainers[nameInput].valueStatus() !== _Status.default.INVALID_VALUE) {
+      inputContainers[nameInput].container().classList.remove('invalid-value');
+    }
+  });
+});
+form.addEventListener('focusout', function () {
   formDate.date = (0, _moment.default)("".concat(inputContainers.day.value(), "/").concat(inputContainers.month.value(), "/").concat(inputContainers.year.value()), 'D/M/YYYY');
   formDate.allStatus = (0, _Status.allValueIsValid)([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
   formDate.dateStatus = (0, _Status.dateStatus)(formDate.date);
@@ -6000,7 +6088,7 @@ form.addEventListener('submit', function (event) {
     }
   }
 });
-},{"moment":"node_modules/moment/moment.js","../models/Status":"models/Status.js","../models/InputContainer":"models/InputContainer.js","../models/Age":"models/Age.js"}],"../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"moment":"../node_modules/moment/moment.js","../models/Status":"models/Status.js","../models/InputContainer":"models/InputContainer.js","../models/Age":"models/Age.js"}],"../../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -6025,7 +6113,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61846" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55984" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -6169,5 +6257,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/index.js"], null)
+},{}]},{},["../../../../../../nvm/v20.18.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/index.js"], null)
 //# sourceMappingURL=/scripts.bcf3243b.js.map

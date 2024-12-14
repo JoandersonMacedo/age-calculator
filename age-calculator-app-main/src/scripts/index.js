@@ -13,30 +13,32 @@ const outputYear = document.getElementById('output-year');
 
 const nodeArray = Array.from(arayImputContainers);
 
-const inputContainers = {}
+const inputContainers = {};
 const formDate = {};
 
 nodeArray.forEach((container) => {
     const input = container.querySelector('.input');
     const nameInput = input.getAttribute('name');
-    const maxValue = parseInt(input.getAttribute('max'));
-    const minValue = parseInt(input.getAttribute('min'));
+    const validationType = input.getAttribute('validationtype');
     const message = container.querySelector('.message-invalid-value');
+    
+    inputContainers[nameInput] = InputContainer(container, input, nameInput, message, validationType);
 
-    inputContainers[nameInput] = InputContainer(container, input, nameInput, minValue, maxValue, message);
+    input.addEventListener('change', () => {
+        if(inputContainers[nameInput].valueStatus() === status.INVALID_VALUE) {
+            inputContainers[nameInput].container().classList.add('invalid-value');
+            inputContainers[nameInput].message().textContent = `Must be a valid ${inputContainers[nameInput].nameInput()}`;
+        }
+    });
+
+    input.addEventListener('input', () => {
+        if(inputContainers[nameInput].valueStatus() !== status.INVALID_VALUE) {
+            inputContainers[nameInput].container().classList.remove('invalid-value');
+        }
+    })
 });
 
-
-form.addEventListener('input', () => {
-    for (const property in inputContainers) {
-        if (inputContainers[property].valueStatus() === status.INVALID_VALUE) {
-            inputContainers[property].container().classList.add('invalid-value');
-            inputContainers[property].message().textContent = `Must be a valid ${inputContainers[property].nameInput()}`;
-        } else {
-            inputContainers[property].container().classList.remove('invalid-value');
-        }
-    }
-
+form.addEventListener('focusout', () => {
     formDate.date = moment(`${inputContainers.day.value()}/${inputContainers.month.value()}/${inputContainers.year.value()}`, 'D/M/YYYY');
     formDate.allStatus = allValueIsValid([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
     formDate.dateStatus = dateStatus(formDate.date);
