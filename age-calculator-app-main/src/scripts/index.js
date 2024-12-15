@@ -38,11 +38,17 @@ nodeArray.forEach((container) => {
     })
 });
 
-form.addEventListener('focusout', () => {
+form.addEventListener('input', () => {
     formDate.date = moment(`${inputContainers.day.value()}/${inputContainers.month.value()}/${inputContainers.year.value()}`, 'D/M/YYYY');
     formDate.allStatus = allValueIsValid([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
     formDate.dateStatus = dateStatus(formDate.date);
 
+    if (formDate.allStatus !== status.ALL_IS_VALID) {
+        inputs.classList.remove('invalid-date')
+    }
+});
+
+form.addEventListener('change', () => {
     if (formDate.allStatus === status.ALL_IS_VALID) {
         if (formDate.dateStatus === status.INVALID_DATE) {
             inputs.classList.add('invalid-date');
@@ -53,10 +59,8 @@ form.addEventListener('focusout', () => {
         } else {
             inputs.classList.remove('invalid-date');
         }
-    } else {
-        inputs.classList.remove('invalid-date')
     }
-});
+})
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();

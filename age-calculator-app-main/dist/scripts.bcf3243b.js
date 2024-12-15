@@ -6054,10 +6054,15 @@ nodeArray.forEach(function (container) {
     }
   });
 });
-form.addEventListener('focusout', function () {
+form.addEventListener('input', function () {
   formDate.date = (0, _moment.default)("".concat(inputContainers.day.value(), "/").concat(inputContainers.month.value(), "/").concat(inputContainers.year.value()), 'D/M/YYYY');
   formDate.allStatus = (0, _Status.allValueIsValid)([inputContainers.day.valueStatus(), inputContainers.month.valueStatus(), inputContainers.year.valueStatus()]);
   formDate.dateStatus = (0, _Status.dateStatus)(formDate.date);
+  if (formDate.allStatus !== _Status.default.ALL_IS_VALID) {
+    inputs.classList.remove('invalid-date');
+  }
+});
+form.addEventListener('change', function () {
   if (formDate.allStatus === _Status.default.ALL_IS_VALID) {
     if (formDate.dateStatus === _Status.default.INVALID_DATE) {
       inputs.classList.add('invalid-date');
@@ -6068,8 +6073,6 @@ form.addEventListener('focusout', function () {
     } else {
       inputs.classList.remove('invalid-date');
     }
-  } else {
-    inputs.classList.remove('invalid-date');
   }
 });
 form.addEventListener('submit', function (event) {
@@ -6113,7 +6116,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55984" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59149" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
